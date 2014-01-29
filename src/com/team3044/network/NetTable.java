@@ -14,15 +14,58 @@ import java.io.IOException;
  * @author Joey
  */
 public class NetTable {
-    NetworkTable t;
-    
+    NetworkTable table;
+    /***
+     * 
+     * @param name Name of the network table to create
+     * Use all caps for the tag names
+     */
     public NetTable(String name){
         try {
             NetworkTable.initialize();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
-        NetworkTable.getTable(name);
+        table = NetworkTable.getTable(name);
     }
+    
+    /***
+     * 
+     * @param tag String for the tag (All caps)
+     * @param number Number value to add
+     */
+    public void putDouble(String tag, double number){
+        tag = tag.toUpperCase();
+        table.putNumber(tag, number);
+    }
+    /***
+     * 
+     * @param tag
+     * @return the value of the double at the tag location
+     */
+    public double getDouble(String tag){
+        tag = tag.toUpperCase();
+        return table.getNumber(tag);
+    }
+    /***
+     * 
+     * @param tag 
+     * @param string Value of string to put in place of the value at tag 
+     */
+    public void putString(String tag, String string){
+        tag = tag.toUpperCase();
+        table.putString(tag, string);
+    }
+    
+    /**
+     * 
+     * @param tag
+     * @return Returns the string at the location
+     */
+    public String getString(String tag){
+        tag = tag.toUpperCase();
+        return table.getString(tag);
+    }
+    
     
 }
