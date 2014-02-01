@@ -18,13 +18,14 @@ import edu.wpi.first.wpilibj.Encoder;
 
 /**
  *
- * @author Joey
+ * @authorasdf Joey
  */
 public class Components {
-      //doesn't have motors for shooter(can?), doesn't have anythign for arduino or encoder, no joysticks
+      //(can?), doesn't have anythign for arduino or encoder, 
  //Pickup
     public static DigitalInput UpPickupLimit = new DigitalInput(1,6);
     public static DigitalInput DownPickupLimit = new DigitalInput(1,5);
+    
     
     public static Jaguar PickupRollers =new Jaguar(1,4); 
     public static Jaguar LiftingPickup=new Jaguar(1,3); 
@@ -32,7 +33,7 @@ public class Components {
     public static AnalogChannel RollerPot = new AnalogChannel (1,2);
     
  //Shooter need motors
-   public static DigitalInput DownshooterLimit = new DigitalInput(1,8);
+   public static DigitalInput DownShooterLimit = new DigitalInput(1,8);
     public static DigitalInput UpShooterLimit = new DigitalInput(1,9);
     
     public static Jaguar shootermotorleft = new Jaguar (1,5);
@@ -54,18 +55,18 @@ public class Components {
     public static Servo servCameraShooterX=new Servo(2,1);    
     public static Servo servCameraShooterY=new Servo(2,2);
     
- //driver station add buttons
+ //driver station 
     DriverStationLCD ds=DriverStationLCD.getInstance();
     DriverStation DS= DriverStation.getInstance();
     
-   private static Joystick GamePaddrive=new Joystick(1);//check with xbox controllers
-    private static Joystick GamePadshoot=new Joystick(2);
+   private Joystick GamePaddrive=new Joystick(1);//check with xbox controllers
+    private Joystick GamePadshoot=new Joystick(2);
     
   //other
     public static AnalogChannel ultrasonic = new AnalogChannel(1,3); // going on arduino?
     
   //GamepadDrive
-    public static double leftdriveY=0.0;//left yaxis
+    /*public static double leftdriveY=0.0;//left yaxis
     public static double rightdriveY=0.0;
     public static boolean button1 = false;//A Buton
     public static boolean button2 = false;//b button
@@ -73,27 +74,56 @@ public class Components {
     public static boolean button4 = false;//Y button
     public static boolean button5 = false;//left bumper(top not trigger)
     public static boolean button6 = false;//right bumper
+    */
+    public static boolean rollerfoward=false;
+    public static boolean rollerreverse=false;
+    public static boolean rollerstop=false;
+    public static boolean pickupdown=false;
+    public static boolean pickuptop=false;
+    public static boolean pickupmiddle=false;
+    public static boolean pickupstop=false;
     
+    public static double leftdriveY=0.0;//left yaxis
+    public static double rightdriveY=0.0;
     
+    public static boolean shoot=false;
+    public static boolean pass=false;
+    public static boolean truss=false;
+    public static boolean shooterdown = false;
     //drive- drive+shoot 2-pickup+camera servos
     //rumble motors?
      
+    //shooter
+    public static boolean islimitshooteruptriggerd = false;
+    public static boolean islimitshooterdowntriggerd = false;
+    public static double shootspeed = .5;
+    public static double shootdownspeed = -.25;
+    public static double potvalue;
+    public static double shooterpotpostion;
     
    public void upDateVals(){
-            //drive?
+            //drive? adssdf
             //button vals.
      leftdriveY = GamePaddrive.getRawAxis(2);
      rightdriveY = GamePaddrive.getRawAxis(5);
-     button1=GamePaddrive.getRawButton(1);
-     button2=GamePaddrive.getRawButton(2);
-     button3=GamePaddrive.getRawButton(3);
-     button4=GamePaddrive.getRawButton(4);
-     button5=GamePaddrive.getRawButton(5);
-     button6=GamePaddrive.getRawButton(6);
+     //change with axis?
+     rollerfoward=GamePaddrive.getRawButton(6);
+     rollerreverse=GamePaddrive.getRawButton(5);
+     rollerstop=GamePaddrive.getRawButton(8);
+     pickupdown=GamePaddrive.getRawButton(1);
+     pickuptop=GamePaddrive.getRawButton(2);
+     pickupmiddle=GamePaddrive.getRawButton(4);
+     pickupstop=GamePaddrive.getRawButton(3);//talk to minh
+     
+     shoot=GamePadshoot.getRawButton(6);//right bumper
+     pass= GamePadshoot.getRawButton(2);
+     truss=GamePadshoot.getRawButton(3);
+     shooterdown=GamePadshoot.getRawButton(5);//leftbumper
             
+     ShooterPot.getAverageVoltage();
+     UpShooterLimit.get();
+     DownShooterLimit.get();
+   
         }
-    
-    
-    
     
 }
