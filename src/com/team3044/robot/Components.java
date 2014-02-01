@@ -58,8 +58,8 @@ public class Components {
     DriverStationLCD ds=DriverStationLCD.getInstance();
     DriverStation DS= DriverStation.getInstance();
     
-   private static Joystick GamePaddrive=new Joystick(1);//check with xbox controllers
-    private static Joystick GamePadshoot=new Joystick(2);
+   private Joystick GamePaddrive=new Joystick(1);//check with xbox controllers
+    private Joystick GamePadshoot=new Joystick(2);
     
   //other
     public static AnalogChannel ultrasonic = new AnalogChannel(1,3); // going on arduino?

@@ -23,8 +23,8 @@ public class Shooter {
     private AnalogChannel shootpot = Components.ShooterPot;
     private Jaguar shootermotor = Components.shootermotorleft;
     private Jaguar shootermotorneg = Components.shootermotorright;
-    private boolean buttonone = Components.shoot;
-    private boolean buttontwo = Components.shooterdown;
+    private boolean shootbutton = Components.shoot;
+    private boolean shootdownbutton = Components.shooterdown;
     private double shootspeed = Components.shootspeed;
     private double shootdownspeed = Components.shootdownspeed;
     private double shootpotvalue = Components.potvalue;
@@ -103,7 +103,7 @@ public class Shooter {
                     shootermotor.set(0);
                     shootermotorneg.set(0);
                 }*/
-               if(buttonone==true &&  islimitshooteruptrigger ==false)
+               if(shootbutton==true &&  islimitshooteruptrigger ==false)
                 {
                     shootstate = movingup;
                     shootermotor.set(shootspeed);
@@ -123,7 +123,7 @@ public class Shooter {
                 break;
             case stopped:
                 
-                if(buttontwo&& islimitshooterdowntrigger ==false)
+                if(shootdownbutton&& islimitshooterdowntrigger ==false)
                 {
                     shootstate= movingdown;
                      shootermotor.set(shootdownspeed);
