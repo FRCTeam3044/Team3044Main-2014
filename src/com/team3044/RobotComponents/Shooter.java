@@ -12,7 +12,8 @@ import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.AnalogChannel;
 /**
- *
+ * dsaf
+ * 
  * @author Joey
  */
 public class Shooter {

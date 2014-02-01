@@ -18,13 +18,14 @@ import edu.wpi.first.wpilibj.Encoder;
 
 /**
  *
- * @author Joey
+ * @authorasdf Joey
  */
 public class Components {
       //(can?), doesn't have anythign for arduino or encoder, 
  //Pickup
     public static DigitalInput UpPickupLimit = new DigitalInput(1,6);
     public static DigitalInput DownPickupLimit = new DigitalInput(1,5);
+    
     
     public static Jaguar PickupRollers =new Jaguar(1,4); 
     public static Jaguar LiftingPickup=new Jaguar(1,3); 
