@@ -110,6 +110,7 @@ public class Components {
      rollerfoward=GamePaddrive.getRawButton(6);
      rollerreverse=GamePaddrive.getRawButton(5);
      rollerstop=GamePaddrive.getRawButton(8);
+     
      pickupdown=GamePaddrive.getRawButton(1);
      pickuptop=GamePaddrive.getRawButton(2);
      pickupmiddle=GamePaddrive.getRawButton(4);
