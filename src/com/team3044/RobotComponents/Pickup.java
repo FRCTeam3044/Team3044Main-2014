@@ -48,9 +48,9 @@ public class Pickup {
     private double initpot=0;
     
     public Pickup(){
-    n=STOPPED_UP;//problem need to be fix
-    k=STOPPED;// problem need to be fix
-        }
+        n=STOPPED_UP;//problem need to be fix
+        k=STOPPED;// problem need to be fix
+    }
     public void robotInit(){
         Roller.set(0);
         PickArm.set(Relay.Value.kOff);
@@ -86,10 +86,11 @@ public class Pickup {
                 } 
             }
             case MOVING_BACKWARD:{ //roller is moving to throu the ball out
-                if (rollerfoward||rollerstop)
+                if (rollerfoward||rollerstop){
                     k=STOPPED;
                     Roller.set(0);
                 }
+           }
                 
         }
     }
