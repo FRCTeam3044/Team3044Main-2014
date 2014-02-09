@@ -15,6 +15,9 @@ import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Relay;
+
+
 
 /**
  *
@@ -27,8 +30,8 @@ public class Components {
     public static DigitalInput DownPickupLimit = new DigitalInput(1,5);
     
     
-    public static Jaguar PickupRollers =new Jaguar(1,4); 
-    public static Jaguar LiftingPickup=new Jaguar(1,3); 
+    public static Talon PickupRollers =new Talon(1,4); //talon
+    public static Relay LiftingPickup=new Relay(1,3); //spike
     
     public static AnalogChannel RollerPot = new AnalogChannel (1,2);
     
@@ -59,8 +62,8 @@ public class Components {
     DriverStationLCD ds=DriverStationLCD.getInstance();
     DriverStation DS= DriverStation.getInstance();
     
-   private Joystick GamePaddrive=new Joystick(1);//check with xbox controllers
-    private Joystick GamePadshoot=new Joystick(2);
+    Joystick GamePaddrive=new Joystick(1);//check with xbox controllers
+     Joystick GamePadshoot=new Joystick(2);
     
   //other
     public static AnalogChannel ultrasonic = new AnalogChannel(1,3); // going on arduino?
@@ -82,6 +85,7 @@ public class Components {
     public static boolean pickuptop=false;
     public static boolean pickupmiddle=false;
     public static boolean pickupstop=false;
+    public static boolean shootsinglespeed =false;
     
     public static double leftdriveY=0.0;//left yaxis
     public static double rightdriveY=0.0;
@@ -96,7 +100,9 @@ public class Components {
     //shooter
     public static boolean islimitshooteruptriggerd = false;
     public static boolean islimitshooterdowntriggerd = false;
-    public static double shootspeed = .5;
+    public static double shootspeedone = .5;
+    public static double shootspeedtwo =.4;
+    public static double shootspeedthree = .2;
     public static double shootdownspeed = -.25;
     public static double potvalue;
     public static double shooterpotpostion;
@@ -120,11 +126,17 @@ public class Components {
      pass= GamePadshoot.getRawButton(2);
      truss=GamePadshoot.getRawButton(3);
      shooterdown=GamePadshoot.getRawButton(5);//leftbumper
-            
+     shootsinglespeed =GamePadshoot.getRawButton(1);
+     
      ShooterPot.getAverageVoltage();
      UpShooterLimit.get();
      DownShooterLimit.get();
-   
+     
+     DownPickupLimit.get();
+     UpPickupLimit.get();
+     
+     RollerPot.getAverageVoltage();
+     
         }
     
 }

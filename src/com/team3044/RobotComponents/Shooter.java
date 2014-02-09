@@ -18,18 +18,39 @@ public class Shooter {
     private AnalogChannel shootpot = Components.ShooterPot;
     private Jaguar shootermotor = Components.shootermotorleft;
     private Jaguar shootermotorneg = Components.shootermotorright;
+    
     private boolean shootbutton = Components.shoot;
     private boolean shootdownbutton = Components.shooterdown;
-    private double shootspeed = Components.shootspeed;
+    private boolean shootpass = Components.pass;
+    private boolean shoottruss = Components.truss;
+    private boolean shootsinglebutton = Components.shootsinglespeed;
+    
+    private double shootspeedone = Components.shootspeedone;
+    private double shootspeedtwo = Components.shootspeedtwo;
+    private double shootspeedthree = Components.shootspeedthree;
     private double shootdownspeed = Components.shootdownspeed;
+    
     private double shootpotvalue = Components.potvalue;
     private double shootpotposition = Components.shooterpotpostion;
-        private  int shootstate;
+    
+    private  int shootstate;
+        
     private final int down =0;
-    private  final int movingup= 1;
-    private  final int stopped =3;
-    private  final int movingdown = 4;
- 
+    private final int movingup =1;
+    private final int speedone= 2;
+    private final int speedtwo = 3;
+    private final int speedthree =4;
+    private final int stopped =5;
+    private final int movingdown = 6;
+    
+    
+    private double singlespeed = 1; 
+    private double initialpot=0;
+    private double shootpotdown = 15;
+    private double shootpotlow =45;
+    private double shootpotmiddle = 65;
+    private double shootpothigh = 75;
+    
     
     
     public Shooter(){
@@ -38,9 +59,29 @@ public class Shooter {
     
     public void robotInit(){
     shootstate = down;
+    shootermotor.set(0);
+    shootermotorneg.set(0);
+    initialpot =shootpot.getAverageVoltage();
+    shootpotdown +=initialpot;
+    shootpotlow+= initialpot;
+    shootpotmiddle+= initialpot;
+    shootpothigh+=initialpot;
     };
+    
     public void autoInit(){};
-    public void teleopInit(){};
+    
+    public void teleopInit(){
+   
+    
+    };
+    
+    public void disabledInit(){
+        shootermotor.set(0);
+        shootermotorneg.set(0);
+    }
+   public void teleop(){
+       shoot();
+   }
     
     public boolean islimitshooterup(){
         
@@ -48,6 +89,8 @@ public class Shooter {
         
         return islimitshooteruptrigger;
     }
+    
+    
     public boolean islimitshooterdown(){
         
         islimitshooterdowntrigger = downshooterlimit.get();
@@ -55,19 +98,50 @@ public class Shooter {
         return islimitshooterdowntrigger;
     }
     
-    public double shootpotvalue(){
+    
+    public double setshootspeedone(){
         
-        if(shootpotvalue ==0){
-            shootpotposition =1;
+        if(shootbutton == true){
+            shootspeedone= 1;
         }
-        else if(shootpotvalue<.25 && shootpotvalue>0){
-            shootpotposition =2;
+        else if (shootpass == true){
+            shootspeedone =.5;
         }
-        else if (shootpotvalue==.25){
-            shootpotposition =3;
+        else if (shoottruss ==true){
+            shootspeedone = .6;
         }
-
-        return shootpotposition;
+        
+        return shootspeedone;
+    }
+    
+    
+    public double setshootspeedtwo(){
+        if(shootbutton == true){
+            shootspeedtwo= .75;
+        }
+        else if (shootpass == true){
+            shootspeedtwo = .3;
+        }
+        else if (shoottruss ==true){
+            shootspeedtwo = .4;
+        }
+        return shootspeedtwo;
+    }
+    
+    
+    public double setshootspeedthree(){
+        
+        if(shootbutton == true){
+            shootspeedthree= .4;
+        }
+        else if (shootpass == true){
+            shootspeedthree = .2;
+        }
+        else if (shoottruss ==true){
+            shootspeedthree = .2;
+        }
+        
+        return shootspeedthree;
     }
     
     
@@ -100,37 +174,110 @@ public class Shooter {
                 }*/
                if(shootbutton==true &&  islimitshooteruptrigger ==false)
                 {
-                    shootstate = movingup;
-                    shootermotor.set(shootspeed);
-                    shootermotorneg.set(-shootspeed);
+                   
+                    shootermotor.set(shootspeedone);
+                    shootermotorneg.set(-shootspeedone);
+                    shootstate = speedone;
                 }
+               else if(shootsinglebutton==true){
+                    shootermotor.set(singlespeed);
+                    shootermotor.set(-singlespeed);
+                    shootstate = movingup;
+               }
                
               break;
-            case movingup:
-                
+           case movingup:
                 if(islimitshooteruptrigger==true || shootpotposition==3)
                 {
                     shootstate=stopped;
                     shootermotor.set(0);
                     shootermotorneg.set(0);
                 }
+                break;
+            case speedone:
+               if(shootdownbutton == true)
+               {
+                   
+                   shootermotor.set(shootdownspeed);
+                   shootermotorneg.set(-shootdownspeed);
+                   shootstate=movingdown;
+               } 
+               else if(shootpot.getAverageVoltage()>shootpothigh || islimitshooteruptrigger == true){
+                    
+                    shootermotor.set(0);
+                    shootermotorneg.set(0);
+                    shootstate = stopped;
+                }
+                else if(shootpot.getAverageVoltage()> shootpotmiddle){
+                   
+                    shootermotor.set(shootspeedthree);
+                    shootermotorneg.set(-shootspeedthree);
+                    shootstate = speedthree;
+                }
+                else if(shootpot.getAverageVoltage()>shootpotlow)
+                 {
+                  
+                   shootermotor.set(shootspeedtwo);
+                   shootermotorneg.set(-shootspeedtwo); 
+                   shootstate = speedtwo;
+                 }
+                 
+                break;
+                
+            case speedtwo:
+                 if(shootdownbutton ==true){
+                    
+                     shootermotor.set(shootdownspeed);
+                     shootermotorneg.set(-shootdownspeed);
+                     shootstate =movingdown;
+                 }
+                 else if(shootpot.getAverageVoltage() >shootpothigh || islimitshooteruptrigger ==true){
+                     shootermotor.set(0);
+                     shootermotorneg.set(0);
+                     shootstate =stopped;
+                 }
+                 else if(shootpot.getAverageVoltage()>shootpotmiddle)
+                 {
+                     shootermotor.set(shootspeedthree);
+                     shootermotor.set(-shootspeedthree);
+                     shootstate = speedthree;
+                 }
                 
                 break;
+                
+            case speedthree:
+                
+                if(shootdownbutton ==true){
+                    shootermotor.set(shootdownspeed);
+                    shootermotorneg.set(-shootdownspeed);
+                    shootstate =movingdown;
+                }
+                else if(shootpot.getAverageVoltage() >shootpothigh || islimitshooteruptrigger ==true){
+                     shootermotor.set(0);
+                     shootermotorneg.set(0);
+                     shootstate =stopped;
+                 }
+                
+                break;
+                
             case stopped:
                 
                 if(shootdownbutton&& islimitshooterdowntrigger ==false)
                 {
+                    shootermotor.set(shootdownspeed);
+                    shootermotorneg.set(-shootdownspeed);
                     shootstate= movingdown;
-                     shootermotor.set(shootdownspeed);
-                    shootermotor.set(-shootdownspeed);
                 }
+                
                 break;
+                
             case movingdown:
-                 if(islimitshooterdowntrigger==false || shootpotposition ==1)
+                 if(islimitshooterdowntrigger==false || shootpot.getAverageVoltage()<shootpotdown)
                 {
-                    shootstate=down;
+                    
                     shootermotor.set(0);
                     shootermotorneg.set(0);
+                    shootstate=down;
                 }
         }
         
