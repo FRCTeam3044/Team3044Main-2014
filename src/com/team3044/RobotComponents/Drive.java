@@ -26,6 +26,17 @@ public class Drive {
     public Drive(){
     
    }
+    public void setDistanceToTravel(double left, double right){
+        //in inches
+    }
+    
+    public boolean hasTraveledSetDistance(){
+        return true;
+    }
+    
+    public void resetDistance(boolean set){
+    
+    }
     
     public void robotInit(){
     Jagleft.set(0);

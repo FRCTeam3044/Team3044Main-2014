@@ -6,8 +6,6 @@
 
 package com.team3044.network;
 
-import edu.wpi.first.wpilibj.image.NIVision.Rect;
-
 /**
  *
  * @author Joey
@@ -38,6 +36,16 @@ public class Camera {
             }
         }
         return rects;
+    }
+    
+    public Target getTarget(){
+        
+        return null;
+    }
+    
+    public int getNumTargets(){
+        //0 no targets
+        return -1;
     }
     
 }

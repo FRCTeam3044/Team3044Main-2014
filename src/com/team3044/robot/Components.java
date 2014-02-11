@@ -63,7 +63,7 @@ public class Components {
     DriverStation DS= DriverStation.getInstance();
     
     Joystick GamePaddrive=new Joystick(1);//check with xbox controllers
-     Joystick GamePadshoot=new Joystick(2);
+    Joystick GamePadshoot=new Joystick(2);
     
   //other
     public static AnalogChannel ultrasonic = new AnalogChannel(1,3); // going on arduino?
@@ -107,7 +107,7 @@ public class Components {
     public static double potvalue;
     public static double shooterpotpostion;
     
-   public void upDateVals(){
+   public  void upDateVals(){
             //drive? adssdf
             //button vals.
      leftdriveY = GamePaddrive.getRawAxis(2);

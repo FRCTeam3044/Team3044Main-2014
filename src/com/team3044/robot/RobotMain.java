@@ -11,6 +11,8 @@ package com.team3044.robot;
 import com.team3044.RobotComponents.Drive;
 import com.team3044.RobotComponents.Pickup;
 import com.team3044.RobotComponents.Shooter;
+import com.team3044.network.Camera;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
 /**
@@ -23,10 +25,23 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  //TEST
 public class RobotMain extends IterativeRobot {
     private static Utilities utils;
-    private static Components components; // if this works as static... Check net tables
+    private static Components components = new Components(); // if this works as static... Check net tables
     Drive drive;
     Pickup pickup;
     Shooter shooter;
+    
+    DriverStation ds = DriverStation.getInstance();
+    
+    int autoType = 0;
+    int autoIndex = 0;
+    
+    double autoStartTime = 0;
+    double time = 0;
+    
+    final int MOVE_THEN_SHOOT = 0;
+    final int SHOOT_THEN_MOVE = 1;
+        
+    Camera camera = new Camera();
     
     public static Utilities getUtilities(){
         return utils;
@@ -46,20 +61,44 @@ public class RobotMain extends IterativeRobot {
         pickup = new Pickup();
         shooter = new Shooter();
         drive = new Drive();
+        
+        shooter.robotInit();
+        pickup.robotInit();
+        drive.robotInit();
+        
+        pickup.teleopInit();
+        drive.teleopInit();
+        shooter.teleopInit();
+        
+    
     }
 
     /**
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic() {
-        
+        switch(autoType){
+            case MOVE_THEN_SHOOT:
+                autoMoveAndShoot();
+            break;
+            
+            case SHOOT_THEN_MOVE:
+                autoShootAndMove();
+            break;
+                
+        }
+    }
+    
+    public void testInit(){
+        drive.teleopInit();
+    }
+    
+    public void testPeriodic(){
+        drive.Drivemain();
     }
 
     public void teleopInit(){
-        pickup.teleopInit();
-        drive.teleopInit();
-        shooter.teleopInit();
-        
+
     }
     
     /**
@@ -68,13 +107,44 @@ public class RobotMain extends IterativeRobot {
     public void teleopPeriodic() {
         pickup.teleop();
         shooter.teleop();
-        drive.Drivemain();        
+        drive.Drivemain();
+        
+        
     }
     
-    /**
-     * This function is called periodically during test mode
-     */
-    public void testPeriodic() {
+    public void autoInit(){
+        
+    }
+    
+    public void autoMoveAndShoot(){
+        switch(autoIndex){
+            case 0:
+                //5 feet wheels are 12.25 in double check
+                drive.setDistanceToTravel(60, 60);
+                autoIndex += 1;
+            break;
+            case 1:
+                if(drive.hasTraveledSetDistance()){
+                    drive.resetDistance(false);
+                    autoIndex++;
+                    time = ds.getMatchTime();
+                }
+            break;
+            case 2:
+                //assuming it takes .5 seconds from shot to scoring
+                if(ds.getMatchTime() > 4.5){
+                    autoIndex ++;
+                }
+            break;
+            case 3:
+                if(/*catcher is down*/1==1){
+                
+                }
+            break;
+        }
+    }
+    
+    public void autoShootAndMove(){
     
     }
     
