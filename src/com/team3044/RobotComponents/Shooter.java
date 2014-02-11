@@ -68,18 +68,47 @@ public class Shooter {
     shootpotlow+= initialpot;
     shootpotmiddle+= initialpot;
     shootpothigh+=initialpot;
+    
+    try {
+            shootermotor = new CANJaguar(1,CANJaguar.ControlMode.kPercentVbus);
+            shootermotor.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            shootermotor.configEncoderCodesPerRev(250);
+            shootermotorneg = new CANJaguar(2,CANJaguar.ControlMode.kPercentVbus);
+            shootermotorneg.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            shootermotorneg.configEncoderCodesPerRev(250);
+            
+            //jag.setSpeedReference(CANJaguar.SpeedReference.kEncoder);
+            
+            
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
     };
     
     public void autoInit(){};
     
     public void teleopInit(){
-   
+    try {
+            shootermotor.enableControl();
+            shootermotorneg.enableControl();
+        } 
+    catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
     
     };
     
     public void disabledInit(){
-        shootermotor.set(0);
-        shootermotorneg.set(0);
+        try {
+            shootermotor.setX(0);
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
+        try {
+            shootermotorneg.setX(0);
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
     }
    public void teleop(){
        shoot();
