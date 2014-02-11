@@ -6,14 +6,38 @@
 
 package com.team3044.network;
 
+import edu.wpi.first.wpilibj.image.NIVision.Rect;
+
 /**
  *
  * @author Joey
  */
 public class Camera {
     
-    public Camera(int id){
+    NetTable t;
+            
+    public Camera(){
+        t = new NetTable("CAMERA");
+    }
     
+    public Rectangle getRectangle(int id){
+        return t.getRectangle(id);
+    }
+    
+    public Rectangle[] getRectangles(){
+        Rectangle rects[] = new Rectangle[10];
+        boolean atEnd = false;
+        double done = t.getDouble("MAXRECTS");
+        int index = 0;
+        while(!atEnd){
+            if(index != done){
+                rects[index] = getRectangle(index);
+                index ++;
+            }else{
+                atEnd = true;
+            }
+        }
+        return rects;
     }
     
 }

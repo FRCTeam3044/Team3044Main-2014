@@ -43,6 +43,9 @@ public class RobotMain extends IterativeRobot {
     public void robotInit() {
         utils = new Utilities();
         components = new Components();
+        pickup = new Pickup();
+        shooter = new Shooter();
+        drive = new Drive();
     }
 
     /**
@@ -52,11 +55,20 @@ public class RobotMain extends IterativeRobot {
         
     }
 
+    public void teleopInit(){
+        pickup.teleopInit();
+        drive.teleopInit();
+        shooter.teleopInit();
+        
+    }
+    
     /**
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        
+        pickup.teleop();
+        shooter.teleop();
+        drive.Drivemain();        
     }
     
     /**
