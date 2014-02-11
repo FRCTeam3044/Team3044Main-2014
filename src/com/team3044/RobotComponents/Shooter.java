@@ -37,12 +37,12 @@ public class Shooter {
     
     private  int shootstate;
         
-    private final int down =0;
+    public final int down =0;
     private final int movingup =1;
     private final int speedone= 2;
     private final int speedtwo = 3;
     private final int speedthree =4;
-    private final int stopped =5;
+    public final int stopped =5;
     private final int movingdown = 6;
     
     

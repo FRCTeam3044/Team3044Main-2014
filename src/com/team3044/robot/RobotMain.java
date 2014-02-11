@@ -12,6 +12,7 @@ import com.team3044.RobotComponents.Drive;
 import com.team3044.RobotComponents.Pickup;
 import com.team3044.RobotComponents.Shooter;
 import com.team3044.network.Camera;
+import com.team3044.network.NetTable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
@@ -24,12 +25,12 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  */
  //TEST
 public class RobotMain extends IterativeRobot {
-    private static Utilities utils;
-    private static Components components = new Components(); // if this works as static... Check net tables
+    private Utilities utils;
+    private Components components = new Components(); // if this works as static... Check net tables
     Drive drive;
     Pickup pickup;
     Shooter shooter;
-    
+    NetTable table = NetTable.getInstance();
     DriverStation ds = DriverStation.getInstance();
     
     int autoType = 0;
@@ -41,13 +42,13 @@ public class RobotMain extends IterativeRobot {
     final int MOVE_THEN_SHOOT = 0;
     final int SHOOT_THEN_MOVE = 1;
         
-    Camera camera = new Camera();
+    //Camera camera = new Camera();
     
-    public static Utilities getUtilities(){
+    public Utilities getUtilities(){
         return utils;
     }
     
-    public static Components getComponents(){
+    public Components getComponents(){
         return components;
     }
     
@@ -77,6 +78,11 @@ public class RobotMain extends IterativeRobot {
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic() {
+        shooter.teleop();
+        pickup.teleop();
+        if(table.getDouble("")){
+        
+        }
         switch(autoType){
             case MOVE_THEN_SHOOT:
                 autoMoveAndShoot();
@@ -108,6 +114,8 @@ public class RobotMain extends IterativeRobot {
         pickup.teleop();
         shooter.teleop();
         drive.Drivemain();
+        components.upDateVals();
+        components.updatedrivevals();
         
         
     }
@@ -119,33 +127,90 @@ public class RobotMain extends IterativeRobot {
     public void autoMoveAndShoot(){
         switch(autoIndex){
             case 0:
+                
                 //5 feet wheels are 12.25 in double check
                 drive.setDistanceToTravel(60, 60);
                 autoIndex += 1;
             break;
-            case 1:
-                if(drive.hasTraveledSetDistance()){
+            case 1:            
+                if(drive.hasTraveledSetDistance() || ds.getMatchTime() == 4){
                     drive.resetDistance(false);
+                    drive.stop();
                     autoIndex++;
                     time = ds.getMatchTime();
                 }
             break;
             case 2:
+                Components.pickupdown = true;
                 //assuming it takes .5 seconds from shot to scoring
                 if(ds.getMatchTime() > 4.5){
                     autoIndex ++;
+                    Components.pickupdown = false;
                 }
             break;
             case 3:
-                if(/*catcher is down*/1==1){
-                
+                if(/*catcher is down*/1==1 && shooter.getshooterstate() == shooter.down){
+                   Components.shoot = true;
+                   autoIndex ++;
                 }
             break;
+            case 4:
+                Components.shoot = false;
+                if(shooter.getshooterstate() == shooter.stopped){
+                    Components.shooterdown = true;
+                    autoIndex ++;
+                }
+            break;
+            case 5:
+                Components.shooterdown = false;
+            break;
+            
+            
         }
     }
     
     public void autoShootAndMove(){
-    
+        switch(autoIndex){
+            case 0:
+                Components.pickupdown = true;
+                if(/*Pickup is down*/ 1 == 1){
+                    Components.pickupdown = false;
+                    autoIndex ++;
+                    
+                }
+                if(shooter.getshooterstate() == shooter.stopped){
+                    Components.shooterdown = true;
+                }else if(shooter.getshooterstate() == shooter.down){
+                    Components.shooterdown = false;
+                }
+                
+            break;
+            case 1:
+                Components.shoot = false;
+                Components.shooterdown = false;
+                if(shooter.getshooterstate() == shooter.down){
+                    Components.shoot = true;
+                    autoIndex++;
+                }
+            break;
+            case 2:
+                Components.shoot = false;
+                Components.shooterdown = true;
+                autoIndex++;
+            break;
+            case 3:
+                drive.setDistanceToTravel(60, 60);
+                if(ds.getMatchTime() >= 4.5){
+                    autoIndex++;
+                }
+            break;
+            case 4:
+                if(drive.hasTraveledSetDistance()){
+                    drive.stop();
+                    drive.resetDistance(false);
+                    autoIndex ++;
+                }
+        }
     }
     
 }

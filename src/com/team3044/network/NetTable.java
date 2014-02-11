@@ -15,17 +15,18 @@ import java.io.IOException;
  */
 public class NetTable {
     NetworkTable table;
+    private static NetTable network;
     /***
      * 
      * @param name Name of the network table to create
      * Use all caps for the tag names
      */
     public NetTable(String name){
-        try {
+        /*try {
             NetworkTable.initialize();
         } catch (IOException ex) {
             ex.printStackTrace();
-        }
+        }*/
         table = NetworkTable.getTable(name);
     }
     
@@ -76,5 +77,11 @@ public class NetTable {
 	return r;	
     }
     
+    public static NetTable getInstance(){
+        if(network == null){
+            network = new NetTable("CAMERA");
+        }
+        return network;
+    }
     
 }

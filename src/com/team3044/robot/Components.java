@@ -114,6 +114,10 @@ public class Components {
     public static double shootdownspeed = -.25;
     public static double potvalue;
     public static double shooterpotpostion;
+    private boolean pickupuplimit;
+    private boolean pickupdownlimit;
+    private double leftencoderd;
+    private double rightencoderd;
     
    public  void upDateVals(){
             //drive? adssdf
