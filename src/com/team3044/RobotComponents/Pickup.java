@@ -166,6 +166,11 @@ public class Pickup {
                 }
            }    
         }
-                
+        public int getRoller(){
+            return k;
+        }        
+        public int getPickarm(){
+            return n;
+        }
     } 
     

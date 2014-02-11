@@ -5,6 +5,7 @@
  */
 
 package com.team3044.robot;
+import com.team3044.network.Dashboard;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.Joystick;
@@ -12,10 +13,12 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Talon;
 //import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.AnalogChannel;
+import edu.wpi.first.wpilibj.CANJaguar;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Relay;
+
 
 
 
@@ -24,7 +27,7 @@ import edu.wpi.first.wpilibj.Relay;
  * @authorasdf Joey
  */
 public class Components {
-      //(can?), doesn't have anythign for arduino or encoder, 
+      //(can?), doesn't have anythign for arduino , 
  //Pickup
     public static DigitalInput UpPickupLimit = new DigitalInput(1,6);
     public static DigitalInput DownPickupLimit = new DigitalInput(1,5);
@@ -39,8 +42,10 @@ public class Components {
    public static DigitalInput DownShooterLimit = new DigitalInput(1,8);
     public static DigitalInput UpShooterLimit = new DigitalInput(1,9);
     
-    public static Jaguar shootermotorleft = new Jaguar (1,5);
-    public static Jaguar shootermotorright = new Jaguar (1,6);
+    //public static Jaguar shootermotorleft = new Jaguar (1,5);
+    //public static Jaguar shootermotorright = new Jaguar (1,6);
+    public static CANJaguar shootermotorleft;
+    public static CANJaguar shootermotorright;
             
     public static AnalogChannel ShooterPot = new AnalogChannel (1,1);
      
@@ -59,8 +64,9 @@ public class Components {
     public static Servo servCameraShooterY=new Servo(2,2);
     
  //driver station 
-    DriverStationLCD ds=DriverStationLCD.getInstance();
-    DriverStation DS= DriverStation.getInstance();
+    public DriverStationLCD ds=DriverStationLCD.getInstance();
+    public DriverStation DS= DriverStation.getInstance();
+    public Dashboard dashboard = Dashboard.getInstance();
     
     Joystick GamePaddrive=new Joystick(1);//check with xbox controllers
      Joystick GamePadshoot=new Joystick(2);
@@ -87,6 +93,8 @@ public class Components {
     public static boolean pickupstop=false;
     public static boolean shootsinglespeed =false;
     
+    public static double pickuppot;
+    
     public static double leftdriveY=0.0;//left yaxis
     public static double rightdriveY=0.0;
     
@@ -107,11 +115,16 @@ public class Components {
     public static double potvalue;
     public static double shooterpotpostion;
     
+    public static boolean pickupuplimit;
+    public static boolean pickupdownlimit;
+    
+    public static double leftencoderd; 
+    public static double rightencoderd;
+    
    public void upDateVals(){
             //drive? adssdf
             //button vals.
-     leftdriveY = GamePaddrive.getRawAxis(2);
-     rightdriveY = GamePaddrive.getRawAxis(5);
+    
      //change with axis?
      rollerfoward=GamePaddrive.getRawButton(6);
      rollerreverse=GamePaddrive.getRawButton(5);
@@ -128,15 +141,39 @@ public class Components {
      shooterdown=GamePadshoot.getRawButton(5);//leftbumper
      shootsinglespeed =GamePadshoot.getRawButton(1);
      
-     ShooterPot.getAverageVoltage();
+     potvalue=ShooterPot.getAverageVoltage();
      UpShooterLimit.get();
      DownShooterLimit.get();
      
-     DownPickupLimit.get();
-     UpPickupLimit.get();
+     pickupuplimit=DownPickupLimit.get();
+     pickupdownlimit=UpPickupLimit.get();
      
-     RollerPot.getAverageVoltage();
+     pickuppot=RollerPot.getAverageVoltage();
+     
+     leftencoderd=encoderleftdrive.getDistance();
+     rightencoderd=encoderrightdrive.getDistance();
      
         }
+   public void updatedrivevals(){
+     leftdriveY = GamePaddrive.getRawAxis(2);
+     rightdriveY = GamePaddrive.getRawAxis(5);
+   }
+   public void test(){
+       //testing limit switches
+           dashboard.putBoolean("Limit up shooter ", islimitshooteruptriggerd);
+           dashboard.putBoolean("Limit down shooter ", islimitshooterdowntriggerd);
+           dashboard.putBoolean("Limit pickup up ", pickupuplimit);
+           dashboard.putBoolean("Limit pickup down ", pickupdownlimit);
+       
+      //pots
+           dashboard.putDouble("Shooter pot ", potvalue);
+           dashboard.putDouble("Pickup pot ", pickuppot);
+           
+      //encoder
+           dashboard.putDouble("Leftdrive encoder distance", leftencoderd);
+           dashboard.putDouble("rightdrive encoder distance", rightencoderd);
+         
+           
+   }
     
 }
