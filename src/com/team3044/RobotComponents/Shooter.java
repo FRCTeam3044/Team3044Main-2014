@@ -8,7 +8,11 @@ import edu.wpi.first.wpilibj.AnalogChannel;
 import edu.wpi.first.wpilibj.CANJaguar;
 import edu.wpi.first.wpilibj.can.CANTimeoutException;
 /**
- * dsaf
+ * 
+ * 
+ * Has CAN
+ * Limit Switches are set to normally closed ie will send a normally true signal
+ * 
  * 
  * @author Joey
  */
@@ -38,12 +42,12 @@ public class Shooter {
     private  int shootstate;
         
     public final int down =0;
-    private final int movingup =1;
-    private final int speedone= 2;
-    private final int speedtwo = 3;
-    private final int speedthree =4;
+    public final int movingup =1;
+    public final int speedone= 2;
+    public final int speedtwo = 3;
+    public final int speedthree =4;
     public final int stopped =5;
-    private final int movingdown = 6;
+    public final int movingdown = 6;
     
     
     private double singlespeed = 1; 
@@ -61,25 +65,62 @@ public class Shooter {
     
     public void robotInit(){
     shootstate = down;
-    shootermotor.set(0);
-    shootermotorneg.set(0);
+        try {
+            shootermotor.setX(0);
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
+        try {
+            shootermotorneg.setX(0);
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
     initialpot =shootpot.getAverageVoltage();
     shootpotdown +=initialpot;
     shootpotlow+= initialpot;
     shootpotmiddle+= initialpot;
     shootpothigh+=initialpot;
+    
+    try {
+            shootermotor = new CANJaguar(1,CANJaguar.ControlMode.kPercentVbus);
+            shootermotor.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            shootermotor.configEncoderCodesPerRev(250);
+            shootermotorneg = new CANJaguar(2,CANJaguar.ControlMode.kPercentVbus);
+            shootermotorneg.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            shootermotorneg.configEncoderCodesPerRev(250);
+            
+            //jag.setSpeedReference(CANJaguar.SpeedReference.kEncoder);
+            
+            
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
     };
     
     public void autoInit(){};
     
     public void teleopInit(){
-   
+    try {
+            shootermotor.enableControl();
+            shootermotorneg.enableControl();
+        } 
+    catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
     
     };
     
     public void disabledInit(){
-        shootermotor.set(0);
-        shootermotorneg.set(0);
+        try {
+            shootermotor.setX(0);
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
+        try {
+            shootermotorneg.setX(0);
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
     }
    public void teleop(){
        shoot();
@@ -88,7 +129,7 @@ public class Shooter {
     public boolean islimitshooterup(){
         
         islimitshooteruptrigger = upshooterlimit.get();
-        
+        //limit normally closed
         return islimitshooteruptrigger;
     }
     
@@ -96,7 +137,7 @@ public class Shooter {
     public boolean islimitshooterdown(){
         
         islimitshooterdowntrigger = downshooterlimit.get();
-        
+        //limit normally closed
         return islimitshooterdowntrigger;
     }
     
@@ -174,7 +215,7 @@ public class Shooter {
                     shootermotor.set(0);
                     shootermotorneg.set(0);
                 }*/
-               if(shootbutton==true &&  islimitshooteruptrigger ==false)
+               if(shootbutton==true &&  islimitshooteruptrigger ==true)
                 {
             try {
                 shootermotor.setX(shootspeedone);
@@ -204,7 +245,7 @@ public class Shooter {
                
               break;
            case movingup:
-                if(islimitshooteruptrigger==true || shootpotposition==3)
+                if(islimitshooteruptrigger==false || shootpotposition==3)
                 {
                     shootstate=stopped;
             try {
@@ -291,7 +332,7 @@ public class Shooter {
             }
                      shootstate =movingdown;
                  }
-                 else if(shootpot.getAverageVoltage() >shootpothigh || islimitshooteruptrigger ==true){
+                 else if(shootpot.getAverageVoltage() >shootpothigh || islimitshooteruptrigger ==false){
             try {
                 shootermotor.setX(0);
             } catch (CANTimeoutException ex) {
@@ -336,7 +377,7 @@ public class Shooter {
             }
                     shootstate =movingdown;
                 }
-                else if(shootpot.getAverageVoltage() >shootpothigh || islimitshooteruptrigger ==true){
+                else if(shootpot.getAverageVoltage() >shootpothigh || islimitshooteruptrigger ==false){
             try {
                 shootermotor.setX(0);
             } catch (CANTimeoutException ex) {
@@ -354,7 +395,7 @@ public class Shooter {
                 
             case stopped:
                 
-                if(shootdownbutton&& islimitshooterdowntrigger ==false)
+                if(shootdownbutton&& islimitshooterdowntrigger ==true)
                 {
             try {
                 shootermotor.setX(shootdownspeed);
@@ -372,7 +413,7 @@ public class Shooter {
                 break;
                 
             case movingdown:
-                 if(islimitshooterdowntrigger==false || shootpot.getAverageVoltage()<shootpotdown)
+                 if(islimitshooterdowntrigger==true || shootpot.getAverageVoltage()<shootpotdown)
                 {
                     
                     try {

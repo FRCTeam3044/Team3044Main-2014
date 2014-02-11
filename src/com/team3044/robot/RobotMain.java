@@ -80,8 +80,8 @@ public class RobotMain extends IterativeRobot {
     public void autonomousPeriodic() {
         shooter.teleop();
         pickup.teleop();
-        if(table.getDouble("")){
-        
+        if(table.getDouble("ISHOT") == 1 && ds.getMatchTime() < 5){ //<--- Change to boolean
+            autoType = SHOOT_THEN_MOVE;
         }
         switch(autoType){
             case MOVE_THEN_SHOOT:
@@ -130,11 +130,12 @@ public class RobotMain extends IterativeRobot {
                 
                 //5 feet wheels are 12.25 in double check
                 drive.setDistanceToTravel(60, 60);
+                drive.resetDistance(true);
                 autoIndex += 1;
             break;
             case 1:            
-                if(drive.hasTraveledSetDistance() || ds.getMatchTime() == 4){
-                    drive.resetDistance(false);
+                if(drive.hasTraveledSetDistance() || ds.getMatchTime() >= 4){
+                    
                     drive.stop();
                     autoIndex++;
                     time = ds.getMatchTime();
@@ -149,7 +150,7 @@ public class RobotMain extends IterativeRobot {
                 }
             break;
             case 3:
-                if(/*catcher is down*/1==1 && shooter.getshooterstate() == shooter.down){
+                if(/*pickup is down*/1==1 && shooter.getshooterstate() == shooter.down){
                    Components.shoot = true;
                    autoIndex ++;
                 }
@@ -195,11 +196,16 @@ public class RobotMain extends IterativeRobot {
             break;
             case 2:
                 Components.shoot = false;
-                Components.shooterdown = true;
-                autoIndex++;
+                
+                if(shooter.getshooterstate() == shooter.stopped){
+                    Components.shooterdown = true;
+                    autoIndex++;
+                }
+                
             break;
             case 3:
                 drive.setDistanceToTravel(60, 60);
+                drive.resetDistance(true);
                 if(ds.getMatchTime() >= 4.5){
                     autoIndex++;
                 }
@@ -207,7 +213,6 @@ public class RobotMain extends IterativeRobot {
             case 4:
                 if(drive.hasTraveledSetDistance()){
                     drive.stop();
-                    drive.resetDistance(false);
                     autoIndex ++;
                 }
         }

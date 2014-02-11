@@ -55,7 +55,7 @@ public class Drive {
  }
 
     public void stop() {
-        throw new java.lang.UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
    
     
