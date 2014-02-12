@@ -149,6 +149,9 @@ public class Components {
      
      pickuppot=RollerPot.getAverageVoltage();
      
+     islimitshooterdowntriggerd = !DownShooterLimit.get();
+     islimitshooteruptriggerd = !UpShooterLimit.get();
+     
      leftencoderd=encoderleftdrive.getDistance();
      rightencoderd=encoderrightdrive.getDistance();
      

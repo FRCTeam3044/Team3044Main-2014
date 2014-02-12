@@ -54,10 +54,10 @@ public class Shooter {
     public double singlespeed=0;
     
     private double initialpot=0;
-    private double shootpotdown = 15;
-    private double shootpotlow =45;
-    private double shootpotmiddle = 65;
-    private double shootpothigh = 75;
+    private double shootpotdown = .2;
+    private double shootpotlow =.7;
+    private double shootpotmiddle = 1.4;
+    private double shootpothigh = 1.9;
     
     
     
@@ -199,6 +199,11 @@ public class Shooter {
     
     
     public void shoot(){
+        shootbutton = Components.shoot;
+        shootdownbutton = Components.shooterdown;
+        shootpass = Components.pass;
+        shoottruss = Components.truss;
+        shootsinglebutton = Components.shootsinglespeed;
         /*
         if(buttonone&& islimitshooteruptrigger == false && shootpotposition ==2){//moveup
             shootermotor.set(shootspeed);
@@ -259,7 +264,7 @@ public class Shooter {
                
               break;
            case movingup:
-                if(islimitshooteruptrigger==false || shootpotposition==3)
+                if(islimitshooteruptrigger==false /*|| shootpotposition==3*/)
                 {
                     shootstate=stopped;
             try {
