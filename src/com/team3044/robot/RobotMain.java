@@ -15,7 +15,6 @@ import com.team3044.network.Camera;
 import com.team3044.network.NetTable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -108,8 +107,6 @@ public class RobotMain extends IterativeRobot {
       //drive.Drivemain();
       components.test();
       components.upDateVals();
-      components.updatedrivevals();
-      SmartDashboard.putNumber("Shooter State", shooter.getshooterstate());
       shooter.singlespeed =(ds.getAnalogIn(1)/5);
       shooter.shoot();
         
@@ -123,7 +120,6 @@ public class RobotMain extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-            /*
         switch(teleopState){
             case PRE_OPERATOR_MOVE:
                 
@@ -145,8 +141,7 @@ public class RobotMain extends IterativeRobot {
 
                 break;
             }
-        }*/
-            testPeriodic();
+        }
         
     }
     
