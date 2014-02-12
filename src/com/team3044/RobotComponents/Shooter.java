@@ -110,9 +110,7 @@ public class Shooter {
     public void teleopInit(){
     try {
             shootermotor.enableControl();
-            shootermotor2.enableControl();
             shootermotorneg.enableControl();
-            shootermotorneg2.enableControl();
         } 
     catch (CANTimeoutException ex) {
             ex.printStackTrace();
