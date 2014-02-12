@@ -47,6 +47,8 @@ public class Components {
     //public static Jaguar shootermotorright = new Jaguar (1,6);
     public static CANJaguar shootermotorleft;
     public static CANJaguar shootermotorright;
+    public static CANJaguar shootermotorleft2;
+    public static CANJaguar shootermotorright2;
             
     public static AnalogChannel ShooterPot = new AnalogChannel (1,1);
      
@@ -106,6 +108,7 @@ public class Components {
     //drive- drive+shoot 2-pickup+camera servos
     //rumble motors?
      
+    public static double shootmotorvalue;
     //shooter
     public static boolean islimitshooteruptriggerd = false;
     public static boolean islimitshooterdowntriggerd = false;
@@ -119,6 +122,8 @@ public class Components {
     private boolean pickupdownlimit;
     private double leftencoderd;
     private double rightencoderd;
+    
+    
     
    public  void upDateVals(){
             //drive? adssdf
@@ -164,6 +169,7 @@ public class Components {
            SmartDashboard.putBoolean("Limit down shooter ", islimitshooterdowntriggerd);
            SmartDashboard.putBoolean("Limit pickup up ", pickupuplimit);
            SmartDashboard.putBoolean("Limit pickup down ", pickupdownlimit);
+           
        
       //pots
            

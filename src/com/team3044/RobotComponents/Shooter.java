@@ -23,9 +23,10 @@ public class Shooter {
     private DigitalInput downshooterlimit = Components.DownShooterLimit;
     private AnalogChannel shootpot = Components.ShooterPot;
     CANJaguar shootermotor = Components.shootermotorleft;
+    CANJaguar shootermotor2= Components.shootermotorleft2;
     CANJaguar shootermotorneg = Components.shootermotorright;
-    CANJaguar shootermotorneg2;
-    CANJaguar shootermotor2;
+    CANJaguar shootermotorneg2 =Components.shootermotorright2;
+    
     private boolean shootbutton = Components.shoot;
     private boolean shootdownbutton = Components.shooterdown;
     private boolean shootpass = Components.pass;
@@ -54,10 +55,10 @@ public class Shooter {
     public double singlespeed=0;
     
     private double initialpot=0;
-    private double shootpotdown = 15;
-    private double shootpotlow =45;
-    private double shootpotmiddle = 65;
-    private double shootpothigh = 75;
+    private double shootpotdown = .22;
+    private double shootpotlow =1;
+    private double shootpotmiddle = 1.5;
+    private double shootpothigh = 1.9;
     
     
     
@@ -88,11 +89,13 @@ public class Shooter {
         shootstate = down;
         try {
             shootermotor.setX(0);
+            shootermotor2.setX(0);
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }
         try {
             shootermotorneg.setX(0);
+            shootermotorneg2.setX(0);
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }
@@ -111,6 +114,8 @@ public class Shooter {
     try {
             shootermotor.enableControl();
             shootermotorneg.enableControl();
+            shootermotor2.enableControl();
+            shootermotorneg2.enableControl();
         } 
     catch (CANTimeoutException ex) {
             ex.printStackTrace();
@@ -227,39 +232,39 @@ public class Shooter {
                 }*/
                if(shootbutton==true &&  islimitshooteruptrigger ==true)
                 {
-            try {
+                       try {
                 shootermotor.setX(shootspeedone);
                 shootermotor2.setX(shootspeedone);
-            } catch (CANTimeoutException ex) {
-                ex.printStackTrace();
-            }
-            try {
+                    } catch (CANTimeoutException ex) {
+                    ex.printStackTrace();
+                        }
+                 try {
                 shootermotorneg.setX(-shootspeedone);
                 shootermotorneg2.setX(-shootspeedone);
-            } catch (CANTimeoutException ex) {
-                ex.printStackTrace();
-            }
+                     } catch (CANTimeoutException ex) {
+                        ex.printStackTrace();
+                    }
                     shootstate = speedone;
                 }
                else if(shootsinglebutton==true){
-            try {
+                     try {
                 shootermotor.setX(singlespeed);
                 shootermotor2.setX(singlespeed);
-            } catch (CANTimeoutException ex) {
-                ex.printStackTrace();
-            }
-            try {
+                     } catch (CANTimeoutException ex) {
+                       ex.printStackTrace();
+                      }
+                      try {
                 shootermotorneg.setX(-singlespeed);
                 shootermotorneg2.setX(-singlespeed);
-            } catch (CANTimeoutException ex) {
-                ex.printStackTrace();
-            }
+                     } catch (CANTimeoutException ex) {
+                        ex.printStackTrace();
+                   }
                     shootstate = movingup;
-               }
+                       }
                
               break;
            case movingup:
-                if(islimitshooteruptrigger==false || shootpotposition==3)
+                if(islimitshooteruptrigger==false || shootpot.getAverageVoltage()>=shootpothigh)
                 {
                     shootstate=stopped;
             try {
@@ -293,7 +298,7 @@ public class Shooter {
             }
                    shootstate=movingdown;
                } 
-               else if(shootpot.getAverageVoltage()>shootpothigh || islimitshooteruptrigger == true){
+               else if(shootpot.getAverageVoltage()>=shootpothigh || islimitshooteruptrigger == false){
             try {
                 shootermotor.setX(0);
                 shootermotor2.setX(0);
@@ -308,7 +313,7 @@ public class Shooter {
             }
                     shootstate = stopped;
                 }
-                else if(shootpot.getAverageVoltage()> shootpotmiddle){
+                else if(shootpot.getAverageVoltage()>= shootpotmiddle){
             try {
                 shootermotor.setX(shootspeedthree);
                 shootermotor2.setX(shootspeedthree);
@@ -323,7 +328,7 @@ public class Shooter {
             }
                     shootstate = speedthree;
                 }
-                else if(shootpot.getAverageVoltage()>shootpotlow)
+                else if(shootpot.getAverageVoltage()>=shootpotlow)
                  {
             try {
                 shootermotor.setX(shootspeedtwo);
@@ -358,7 +363,7 @@ public class Shooter {
             }
                      shootstate =movingdown;
                  }
-                 else if(shootpot.getAverageVoltage() >shootpothigh || islimitshooteruptrigger ==false){
+                 else if(shootpot.getAverageVoltage() >=shootpothigh || islimitshooteruptrigger ==false){
             try {
                 shootermotor.setX(0);
                 shootermotor2.setX(0);
@@ -373,7 +378,7 @@ public class Shooter {
             }
                      shootstate =stopped;
                  }
-                 else if(shootpot.getAverageVoltage()>shootpotmiddle)
+                 else if(shootpot.getAverageVoltage()>=shootpotmiddle)
                  {
             try {
                 shootermotor.setX(shootspeedthree);
@@ -409,7 +414,7 @@ public class Shooter {
             }
                     shootstate =movingdown;
                 }
-                else if(shootpot.getAverageVoltage() >shootpothigh || islimitshooteruptrigger ==false){
+                else if(shootpot.getAverageVoltage() >=shootpothigh || islimitshooteruptrigger ==false){
             try {
                 shootermotor.setX(0);
                 shootermotor2.setX(0);
@@ -449,7 +454,7 @@ public class Shooter {
                 break;
                 
             case movingdown:
-                 if(islimitshooterdowntrigger==true || shootpot.getAverageVoltage()<shootpotdown)
+                 if(islimitshooterdowntrigger==true || shootpot.getAverageVoltage()<=shootpotdown)
                 {
                     
                     try {
