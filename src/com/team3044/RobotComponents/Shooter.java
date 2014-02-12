@@ -24,7 +24,8 @@ public class Shooter {
     private AnalogChannel shootpot = Components.ShooterPot;
     CANJaguar shootermotor = Components.shootermotorleft;
     CANJaguar shootermotorneg = Components.shootermotorright;
-    
+    CANJaguar shootermotorneg2;
+    CANJaguar shootermotor2;
     private boolean shootbutton = Components.shoot;
     private boolean shootdownbutton = Components.shooterdown;
     private boolean shootpass = Components.pass;
@@ -50,7 +51,8 @@ public class Shooter {
     public final int movingdown = 6;
     
     
-    private double singlespeed = 1; 
+    public double singlespeed=0;
+    
     private double initialpot=0;
     private double shootpotdown = 15;
     private double shootpotlow =45;
@@ -64,7 +66,26 @@ public class Shooter {
     }
     
     public void robotInit(){
-    shootstate = down;
+       try {
+            shootermotor = new CANJaguar(1,CANJaguar.ControlMode.kPercentVbus);
+            shootermotor.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            shootermotor.configEncoderCodesPerRev(250);
+            shootermotorneg = new CANJaguar(3,CANJaguar.ControlMode.kPercentVbus);
+            shootermotorneg.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            shootermotorneg.configEncoderCodesPerRev(250);
+            shootermotor2 = new CANJaguar(2,CANJaguar.ControlMode.kPercentVbus);
+            shootermotor2.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            shootermotor.configEncoderCodesPerRev(250);
+            shootermotorneg2 = new CANJaguar(4,CANJaguar.ControlMode.kPercentVbus);
+            shootermotorneg2.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            shootermotorneg2.configEncoderCodesPerRev(250);            
+            //jag.setSpeedReference(CANJaguar.SpeedReference.kEncoder);
+            
+            
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
+        shootstate = down;
         try {
             shootermotor.setX(0);
         } catch (CANTimeoutException ex) {
@@ -81,20 +102,7 @@ public class Shooter {
     shootpotmiddle+= initialpot;
     shootpothigh+=initialpot;
     
-    try {
-            shootermotor = new CANJaguar(1,CANJaguar.ControlMode.kPercentVbus);
-            shootermotor.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
-            shootermotor.configEncoderCodesPerRev(250);
-            shootermotorneg = new CANJaguar(2,CANJaguar.ControlMode.kPercentVbus);
-            shootermotorneg.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
-            shootermotorneg.configEncoderCodesPerRev(250);
-            
-            //jag.setSpeedReference(CANJaguar.SpeedReference.kEncoder);
-            
-            
-        } catch (CANTimeoutException ex) {
-            ex.printStackTrace();
-        }
+
     };
     
     public void autoInit(){};
@@ -102,7 +110,9 @@ public class Shooter {
     public void teleopInit(){
     try {
             shootermotor.enableControl();
+            shootermotor2.enableControl();
             shootermotorneg.enableControl();
+            shootermotorneg2.enableControl();
         } 
     catch (CANTimeoutException ex) {
             ex.printStackTrace();
@@ -113,11 +123,13 @@ public class Shooter {
     public void disabledInit(){
         try {
             shootermotor.setX(0);
+            shootermotor2.setX(0);
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }
         try {
             shootermotorneg.setX(0);
+            shootermotorneg2.setX(0);
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }
@@ -219,11 +231,13 @@ public class Shooter {
                 {
             try {
                 shootermotor.setX(shootspeedone);
+                shootermotor2.setX(shootspeedone);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
             try {
                 shootermotorneg.setX(-shootspeedone);
+                shootermotorneg2.setX(-shootspeedone);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
@@ -232,11 +246,13 @@ public class Shooter {
                else if(shootsinglebutton==true){
             try {
                 shootermotor.setX(singlespeed);
+                shootermotor2.setX(singlespeed);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
             try {
-                shootermotor.setX(-singlespeed);
+                shootermotorneg.setX(-singlespeed);
+                shootermotorneg2.setX(-singlespeed);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
@@ -250,11 +266,13 @@ public class Shooter {
                     shootstate=stopped;
             try {
                 shootermotor.setX(0);
+                shootermotor2.setX(0);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
             try {
                 shootermotorneg.setX(0);
+                shootermotorneg2.setX(0);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
@@ -265,11 +283,13 @@ public class Shooter {
                {
             try {
                 shootermotor.setX(shootdownspeed);
+                shootermotor2.setX(shootdownspeed);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
             try {
                 shootermotorneg.setX(-shootdownspeed);
+                shootermotorneg2.setX(-shootdownspeed);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
@@ -278,11 +298,13 @@ public class Shooter {
                else if(shootpot.getAverageVoltage()>shootpothigh || islimitshooteruptrigger == true){
             try {
                 shootermotor.setX(0);
+                shootermotor2.setX(0);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
             try {
                 shootermotorneg.setX(0);
+                shootermotorneg2.setX(0);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
@@ -291,11 +313,13 @@ public class Shooter {
                 else if(shootpot.getAverageVoltage()> shootpotmiddle){
             try {
                 shootermotor.setX(shootspeedthree);
+                shootermotor2.setX(shootspeedthree);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
             try {
                 shootermotorneg.setX(-shootspeedthree);
+                shootermotorneg2.setX(-shootspeedthree);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
@@ -305,11 +329,13 @@ public class Shooter {
                  {
             try {
                 shootermotor.setX(shootspeedtwo);
+                shootermotor2.setX(shootspeedtwo);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
             try { 
                 shootermotorneg.setX(-shootspeedtwo);
+                shootermotorneg2.setX(-shootspeedtwo);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
@@ -322,11 +348,13 @@ public class Shooter {
                  if(shootdownbutton ==true){
             try {
                 shootermotor.setX(shootdownspeed);
+                shootermotor2.setX(shootdownspeed);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
             try {
                 shootermotorneg.setX(-shootdownspeed);
+                shootermotorneg2.setX(-shootdownspeed);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
@@ -335,11 +363,13 @@ public class Shooter {
                  else if(shootpot.getAverageVoltage() >shootpothigh || islimitshooteruptrigger ==false){
             try {
                 shootermotor.setX(0);
+                shootermotor2.setX(0);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
             try {
                 shootermotorneg.setX(0);
+                shootermotorneg2.setX(0);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
@@ -349,11 +379,13 @@ public class Shooter {
                  {
             try {
                 shootermotor.setX(shootspeedthree);
+                shootermotor2.setX(shootspeedthree);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
             try {
                 shootermotor.setX(-shootspeedthree);
+                shootermotor2.setX(-shootspeedthree);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
@@ -367,11 +399,13 @@ public class Shooter {
                 if(shootdownbutton ==true){
             try {
                 shootermotor.setX(shootdownspeed);
+                shootermotor2.setX(shootdownspeed);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
             try {
                 shootermotorneg.setX(-shootdownspeed);
+                shootermotorneg2.setX(-shootdownspeed);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
@@ -380,11 +414,13 @@ public class Shooter {
                 else if(shootpot.getAverageVoltage() >shootpothigh || islimitshooteruptrigger ==false){
             try {
                 shootermotor.setX(0);
+                shootermotor2.setX(0);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
             try {
                 shootermotorneg.setX(0);
+                shootermotorneg2.setX(0);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
@@ -399,11 +435,13 @@ public class Shooter {
                 {
             try {
                 shootermotor.setX(shootdownspeed);
+                shootermotor2.setX(shootdownspeed);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
             try {
                 shootermotorneg.setX(-shootdownspeed);
+                shootermotorneg2.setX(-shootdownspeed);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
@@ -418,11 +456,13 @@ public class Shooter {
                     
                     try {
                 shootermotor.setX(0);
+                shootermotor2.setX(0);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }
             try {
                 shootermotorneg.setX(0);
+                shootermotorneg2.setX(0);
             } catch (CANTimeoutException ex) {
                 ex.printStackTrace();
             }

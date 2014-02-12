@@ -33,6 +33,10 @@ public class RobotMain extends IterativeRobot {
     NetTable table = NetTable.getInstance();
     DriverStation ds = DriverStation.getInstance();
     
+    int teleopState = 0;
+    final int PRE_OPERATOR_MOVE = 0;
+    final int STANDARD_TELEOP = 1;
+    
     int autoType = 0;
     int autoIndex = 0;
     
@@ -100,7 +104,12 @@ public class RobotMain extends IterativeRobot {
     }
     
     public void testPeriodic(){
-        drive.Drivemain();
+      //drive.Drivemain();
+      components.test();
+      components.upDateVals();
+      shooter.singlespeed =(ds.getAnalogIn(1)/5);
+      shooter.shoot();
+        
     }
 
     public void teleopInit(){
@@ -111,12 +120,28 @@ public class RobotMain extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        pickup.teleop();
-        shooter.teleop();
-        drive.Drivemain();
-        components.upDateVals();
-        components.updatedrivevals();
-        
+        switch(teleopState){
+            case PRE_OPERATOR_MOVE:
+                
+                Components.leftdriveY = -.75;
+                Components.rightdriveY = .75;
+                drive.Drivemain();
+                if(Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(2), .1)) > 0 
+                        || Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(5), .1)) > 0){
+                    teleopState = STANDARD_TELEOP;
+                }
+                
+                break;
+            case STANDARD_TELEOP:{
+                components.upDateVals();
+                components.updatedrivevals();
+                pickup.teleop();
+                shooter.teleop();
+                drive.Drivemain();
+
+                break;
+            }
+        }
         
     }
     
@@ -167,6 +192,37 @@ public class RobotMain extends IterativeRobot {
             break;
             
             
+        }
+    }
+    
+    public void autoLowGoal(){
+        switch(autoIndex){
+            case 0:
+                drive.setDistanceToTravel(-180, -180);
+                drive.resetDistance(true);
+                autoIndex ++;
+                break;
+            case 1:
+                if(drive.hasTraveledSetDistance()){
+                    drive.stop();
+                    autoIndex++;
+                }
+                break;
+            case 2:
+                if(ds.getMatchTime() > 7){
+                    autoIndex++;
+                }
+                break;
+            case 3:
+                Components.pickupdown = true;
+                autoIndex ++;
+                break;
+            case 4:
+                Components.pickupdown = false;
+                if(/*Pickup is down*/ 1 == 1){
+                    Components.rollerreverse = true;
+                    autoIndex ++;
+                }
         }
     }
     

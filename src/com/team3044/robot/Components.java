@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 
@@ -60,8 +61,8 @@ public class Components {
     public static Servo servCameraPickupX=new Servo(1,8);    
     public static Servo servCameraPickupY=new Servo(1,7);
     
-    public static Servo servCameraShooterX=new Servo(2,1);    
-    public static Servo servCameraShooterY=new Servo(2,2);
+    //public static Servo servCameraShooterX=new Servo(2,1);    
+    //public static Servo servCameraShooterY=new Servo(2,2);
     
  //driver station 
     public DriverStationLCD ds=DriverStationLCD.getInstance();
@@ -156,21 +157,25 @@ public class Components {
      leftdriveY = GamePaddrive.getRawAxis(2);
      rightdriveY = GamePaddrive.getRawAxis(5);
    }
+   double oldPotVal = 0;
    public void test(){
        //testing limit switches
-           dashboard.putBoolean("Limit up shooter ", islimitshooteruptriggerd);
-           dashboard.putBoolean("Limit down shooter ", islimitshooterdowntriggerd);
-           dashboard.putBoolean("Limit pickup up ", pickupuplimit);
-           dashboard.putBoolean("Limit pickup down ", pickupdownlimit);
+           SmartDashboard.putBoolean("Limit up shooter ", islimitshooteruptriggerd);
+           SmartDashboard.putBoolean("Limit down shooter ", islimitshooterdowntriggerd);
+           SmartDashboard.putBoolean("Limit pickup up ", pickupuplimit);
+           SmartDashboard.putBoolean("Limit pickup down ", pickupdownlimit);
        
       //pots
-           dashboard.putDouble("Shooter pot ", potvalue);
-           dashboard.putDouble("Pickup pot ", pickuppot);
+           
+           SmartDashboard.putNumber("Shooter pot ", potvalue);
+           SmartDashboard.putBoolean("Direction", oldPotVal >=  potvalue);
+           SmartDashboard.putNumber("Pickup pot ", pickuppot);
            
       //encoder
-           dashboard.putDouble("Leftdrive encoder distance", leftencoderd);
-           dashboard.putDouble("rightdrive encoder distance", rightencoderd);
-         
+           SmartDashboard.putNumber("Leftdrive encoder distance", leftencoderd);
+           SmartDashboard.putNumber("rightdrive encoder distance", rightencoderd);
+           
+         oldPotVal = potvalue;
            
    }
     
