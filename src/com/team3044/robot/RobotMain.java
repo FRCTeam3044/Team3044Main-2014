@@ -9,12 +9,15 @@ package com.team3044.robot;
 
 
 import com.team3044.RobotComponents.Drive;
+import com.team3044.RobotComponents.TestShooter;
 import com.team3044.RobotComponents.Pickup;
 import com.team3044.RobotComponents.Shooter;
-import com.team3044.network.Camera;
 import com.team3044.network.NetTable;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.can.CANTimeoutException;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -31,8 +34,9 @@ public class RobotMain extends IterativeRobot {
     Pickup pickup;
     Shooter shooter;
     NetTable table = NetTable.getInstance();
+    DriverStationLCD lcd = DriverStationLCD.getInstance();
     DriverStation ds = DriverStation.getInstance();
-    
+    TestShooter testShooter = new TestShooter();
     int teleopState = 0;
     final int PRE_OPERATOR_MOVE = 0;
     final int STANDARD_TELEOP = 1;
@@ -63,6 +67,7 @@ public class RobotMain extends IterativeRobot {
     public void robotInit() {
         utils = new Utilities();
         components = new Components();
+        components.robotInit();
         pickup = new Pickup();
         shooter = new Shooter();
         drive = new Drive();
@@ -109,7 +114,7 @@ public class RobotMain extends IterativeRobot {
       components.upDateVals();
       shooter.singlespeed =(ds.getAnalogIn(1)/5);
       shooter.shoot();
-        
+      SmartDashboard.putNumber("ShooterState", shooter.getshooterstate());
     }
 
     public void teleopInit(){
@@ -120,29 +125,32 @@ public class RobotMain extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        switch(teleopState){
-            case PRE_OPERATOR_MOVE:
-                
-                Components.leftdriveY = -.75;
-                Components.rightdriveY = .75;
-                drive.Drivemain();
-                if(Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(2), .1)) > 0 
-                        || Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(5), .1)) > 0){
-                    teleopState = STANDARD_TELEOP;
-                }
-                
-                break;
-            case STANDARD_TELEOP:{
-                components.upDateVals();
-                components.updatedrivevals();
-                pickup.teleop();
-                shooter.teleop();
-                drive.Drivemain();
-
-                break;
-            }
-        }
         
+            switch(teleopState){
+            case PRE_OPERATOR_MOVE:
+            
+            Components.leftdriveY = -.75;
+            Components.rightdriveY = .75;
+            drive.Drivemain();
+            if(Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(2), .1)) > 0
+            || Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(5), .1)) > 0){
+            teleopState = STANDARD_TELEOP;
+            }
+            
+            break;
+            case STANDARD_TELEOP:{
+            components.upDateVals();
+            components.updatedrivevals();
+            pickup.teleop();
+            shooter.teleop();
+            drive.Drivemain();
+            
+            break;
+            }
+
+       
+        
+    }
     }
     
     public void autoInit(){

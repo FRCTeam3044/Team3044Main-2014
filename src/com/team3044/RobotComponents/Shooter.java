@@ -204,6 +204,12 @@ public class Shooter {
     
     
     public void shoot(){
+        shootbutton = Components.shoot;
+        shootdownbutton = Components.shooterdown;
+        shootpass = Components.pass;
+        shoottruss = Components.truss;
+        shootsinglebutton = Components.shootsinglespeed;
+        
         /*
         if(buttonone&& islimitshooteruptrigger == false && shootpotposition ==2){//moveup
             shootermotor.set(shootspeed);

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.can.CANTimeoutException;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
@@ -124,6 +125,27 @@ public class Components {
     private double rightencoderd;
     
     
+    public void robotInit(){
+               try {
+            shootermotorleft = new CANJaguar(1,CANJaguar.ControlMode.kPercentVbus);
+            shootermotorleft.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            shootermotorleft.configEncoderCodesPerRev(250);
+            shootermotorright = new CANJaguar(3,CANJaguar.ControlMode.kPercentVbus);
+            shootermotorright.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            shootermotorright.configEncoderCodesPerRev(250);
+            shootermotorleft2 = new CANJaguar(2,CANJaguar.ControlMode.kPercentVbus);
+            shootermotorleft2.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            shootermotorleft2.configEncoderCodesPerRev(250);
+            shootermotorright2 = new CANJaguar(4,CANJaguar.ControlMode.kPercentVbus);
+            shootermotorright2.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            shootermotorright2.configEncoderCodesPerRev(250);            
+            //jag.setSpeedReference(CANJaguar.SpeedReference.kEncoder);
+            
+            
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
+    }
     
    public  void upDateVals(){
             //drive? adssdf
@@ -146,9 +168,9 @@ public class Components {
      shootsinglespeed =GamePadshoot.getRawButton(1);
      
      potvalue=ShooterPot.getAverageVoltage();
-     UpShooterLimit.get();
-     DownShooterLimit.get();
-     
+    
+     islimitshooteruptriggerd = UpShooterLimit.get();
+     islimitshooterdowntriggerd = DownShooterLimit.get();
      pickupuplimit=DownPickupLimit.get();
      pickupdownlimit=UpPickupLimit.get();
      
