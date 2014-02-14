@@ -124,8 +124,9 @@ public class RobotMain extends IterativeRobot {
     /**
      * This function is called periodically during operator control
      */
+
     public void teleopPeriodic() {
-        
+        /*
             switch(teleopState){
             case PRE_OPERATOR_MOVE:
             
@@ -150,7 +151,14 @@ public class RobotMain extends IterativeRobot {
 
        
         
-    }
+    }*/
+        testShooter.teleopPeriodic();
+        components.upDateVals();
+        components.updatedrivevals();
+        Components.leftdrive.set(Utilities.deadband(Components.leftdriveY, .2));
+        Components.rightdrive.set(-Utilities.deadband(Components.rightdriveY, .2));
+        System.out.println("LEFTDRIVEY: " + Utilities.deadband(Components.leftdriveY,.2));
+        System.out.println("POT: " + Components.ShooterPot.getVoltage());
     }
     
     public void autoInit(){

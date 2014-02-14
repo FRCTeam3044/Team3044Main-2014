@@ -36,7 +36,7 @@ public class Components {
     
     
     public static Talon PickupRollers =new Talon(1,4); //talon
-    public static Relay LiftingPickup=new Relay(1,3); //spike
+    public static Relay LiftingPickup=new Relay(1,1); //spike
     
     public static AnalogChannel RollerPot = new AnalogChannel (1,2);
     
@@ -54,8 +54,8 @@ public class Components {
     public static AnalogChannel ShooterPot = new AnalogChannel (1,1);
      
  //drive
-    public static Jaguar leftdrive = new Jaguar(1,1);
-    public static Jaguar rightdrive = new Jaguar(1,2);
+    public static Jaguar leftdrive;
+    public static Jaguar rightdrive;
     
     public static Encoder encoderleftdrive = new Encoder(1,1,1,2);
     public static Encoder encoderrightdrive = new Encoder(1,3,1,4);
@@ -118,7 +118,7 @@ public class Components {
     public static double shootspeedthree = .2;
     public static double shootdownspeed = -.25;
     public static double potvalue;
-    public static double shooterpotpostion;
+    public static double shooterPotPosition;
     private boolean pickupuplimit;
     private boolean pickupdownlimit;
     private double leftencoderd;
@@ -126,6 +126,8 @@ public class Components {
     
     
     public void robotInit(){
+            leftdrive = new Jaguar(1,1);
+            rightdrive = new Jaguar(1,2);
                try {
             shootermotorleft = new CANJaguar(1,CANJaguar.ControlMode.kPercentVbus);
             shootermotorleft.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
@@ -168,7 +170,7 @@ public class Components {
      shootsinglespeed =GamePadshoot.getRawButton(1);
      
      potvalue=ShooterPot.getAverageVoltage();
-    
+     shooterPotPosition = ShooterPot.getAverageVoltage();
      islimitshooteruptriggerd = UpShooterLimit.get();
      islimitshooterdowntriggerd = DownShooterLimit.get();
      pickupuplimit=DownPickupLimit.get();
@@ -180,9 +182,12 @@ public class Components {
      rightencoderd=encoderrightdrive.getDistance();
      
         }
+   
    public void updatedrivevals(){
-     leftdriveY = GamePaddrive.getRawAxis(2);
-     rightdriveY = GamePaddrive.getRawAxis(5);
+     leftdriveY = -GamePaddrive.getRawAxis(2);
+     rightdriveY = -GamePaddrive.getRawAxis(5);
+     System.out.println(GamePaddrive.getRawAxis(2));
+     System.out.println(GamePaddrive.getRawAxis(5));
    }
    double oldPotVal = 0;
    public void test(){

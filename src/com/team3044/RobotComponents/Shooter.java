@@ -39,7 +39,7 @@ public class Shooter {
     private double shootdownspeed = Components.shootdownspeed;
     
     private double shootpotvalue = Components.potvalue;
-    private double shootpotposition = Components.shooterpotpostion;
+    private double shootpotposition = Components.shooterPotPosition;
     
     private  int shootstate;
         

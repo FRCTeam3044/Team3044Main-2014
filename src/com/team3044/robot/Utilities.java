@@ -59,10 +59,10 @@ public class Utilities {
      * @return the value of the val variable, or if it is within the cutoff, 0
      */
     public static double deadband(double val, double cutoff){
-        if(val < Math.abs(cutoff)){
+        if(Math.abs(val) < Math.abs(cutoff)){
             val = 0;
         }
-        return 0;
+        return val;
     }
     /**
      * 

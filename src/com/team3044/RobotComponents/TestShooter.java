@@ -21,7 +21,10 @@ public class TestShooter {
     final int MOVINGDOWN = 2;
     final int UP = 3;
     DriverStation ds = DriverStation.getInstance();
-    
+    private double upPotValue = 2.11;
+    private double downPotValue = .37;
+    //Down pot .37
+    //Up pot    2.11
     public void teleopPeriodic(){
         try {
             System.out.println("ID: " + index);
@@ -45,7 +48,7 @@ public class TestShooter {
                     Components.shootermotorleft2.setX(ds.getAnalogIn(1));
                     Components.shootermotorright.setX(-ds.getAnalogIn(1));
                     Components.shootermotorright2.setX(-ds.getAnalogIn(1));
-                    if(Components.islimitshooteruptriggerd){
+                    if(Components.islimitshooteruptriggerd || Components.shooterPotPosition > upPotValue){
                         try {
                             Components.shootermotorleft.setX(0);
                             Components.shootermotorleft2.setX(0);
@@ -56,25 +59,14 @@ public class TestShooter {
                             ex.printStackTrace();
                         }
                     }
-                    /*
-                    if(Components.shooterdown){
-                    try{
-                    Components.shootermotorleft.setX(-ds.getAnalogIn(1));
-                    Components.shootermotorleft2.setX(-ds.getAnalogIn(1));
-                    Components.shootermotorright.setX(ds.getAnalogIn(1));
-                    Components.shootermotorright2.setX(ds.getAnalogIn(1));
-                    index = MOVINGDOWN;
-                    }catch(CANTimeoutException ex){
-                    
-                    }
-                    }*/
+   
                     break;
                 case MOVINGDOWN:
                     Components.shootermotorleft.setX(-ds.getAnalogIn(1));
                     Components.shootermotorleft2.setX(-ds.getAnalogIn(1));
                     Components.shootermotorright.setX(ds.getAnalogIn(1));
                     Components.shootermotorright2.setX(ds.getAnalogIn(1));
-                    if(Components.islimitshooterdowntriggerd){
+                    if(Components.islimitshooterdowntriggerd || Components.shooterPotPosition < downPotValue){
                         try {
                             Components.shootermotorleft.setX(0);
                             Components.shootermotorleft2.setX(0);
@@ -85,34 +77,19 @@ public class TestShooter {
                             ex.printStackTrace();
                         }
                     }
-                    /*
-                    if(Components.shoot){
-                    try{
-                    Components.shootermotorleft.setX(ds.getAnalogIn(1));
-                    Components.shootermotorleft2.setX(ds.getAnalogIn(1));
-                    Components.shootermotorright.setX(-ds.getAnalogIn(1));
-                    Components.shootermotorright2.setX(-ds.getAnalogIn(1));
-                    index = MOVINGDOWN;
-                    }catch(CANTimeoutException ex){
-                    
-                    }
-                    
-                    }*/
+
                     break;
                 case UP:
-                    if(Components.shooterdown){
-                        try {
-                            Components.shootermotorleft.setX(-ds.getAnalogIn(1));
-                            Components.shootermotorleft2.setX(-ds.getAnalogIn(1));
-                            Components.shootermotorright.setX(ds.getAnalogIn(1));
-                            Components.shootermotorright2.setX(ds.getAnalogIn(1));
-                            index = MOVINGDOWN;
-                        }catch (CANTimeoutException ex) {
-                            ex.printStackTrace();
-                        }
-                        
-                    }
-                
+
+                    try {
+                        Components.shootermotorleft.setX(-ds.getAnalogIn(1));
+                        Components.shootermotorleft2.setX(-ds.getAnalogIn(1));
+                        Components.shootermotorright.setX(ds.getAnalogIn(1));
+                        Components.shootermotorright2.setX(ds.getAnalogIn(1));
+                        index = MOVINGDOWN;
+                    }catch (CANTimeoutException ex) {
+                        ex.printStackTrace();
+                    }   
             }
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
