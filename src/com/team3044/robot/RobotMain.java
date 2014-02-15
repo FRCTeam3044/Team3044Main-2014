@@ -16,6 +16,7 @@ import com.team3044.network.NetTable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.can.CANTimeoutException;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -124,7 +125,7 @@ public class RobotMain extends IterativeRobot {
     /**
      * This function is called periodically during operator control
      */
-
+    int tmp = 0;
     public void teleopPeriodic() {
         /*
             switch(teleopState){
@@ -152,13 +153,30 @@ public class RobotMain extends IterativeRobot {
        
         
     }*/
-        testShooter.teleopPeriodic();
+        //testShooter.teleopPeriodic();
         components.upDateVals();
         components.updatedrivevals();
-        Components.leftdrive.set(Utilities.deadband(Components.leftdriveY, .2));
-        Components.rightdrive.set(-Utilities.deadband(Components.rightdriveY, .2));
-        System.out.println("LEFTDRIVEY: " + Utilities.deadband(Components.leftdriveY,.2));
-        System.out.println("POT: " + Components.ShooterPot.getVoltage());
+        if(Components.shoot){
+            if(ds.getDigitalIn(1)){
+                Components.LiftingPickup.set(Relay.Value.kForward);
+            }else{
+                Components.LiftingPickup.set(Relay.Value.kReverse);
+            }
+            
+            try {
+                Thread.sleep((long) (ds.getAnalogIn(2) * 100));
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            Components.LiftingPickup.set(Relay.Value.kOff);
+        }else{
+            Components.LiftingPickup.set(Relay.Value.kOff);
+        }
+        
+        Components.PickupRollers.set(ds.getAnalogIn(3) - ds.getAnalogIn(4));
+        System.out.println("Shooterpot: " + Components.ShooterPot.getVoltage());
+        System.out.println("Pickup up: " + Components.UpPickupLimit.get());
+        System.out.println("Pickup Down" + Components.DownPickupLimit.get());
     }
     
     public void autoInit(){

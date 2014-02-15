@@ -20,11 +20,11 @@ public class Pickup {
     public static boolean rollerstop=Components.rollerstop;
     public static boolean pickupdown=Components.pickupdown;
     public static boolean pickuptop=Components.pickuptop;
-    public static boolean pickupmiddle=Components.pickupmiddle;
+    //public static boolean pickupmiddle=Components.pickupmiddle;
     public static boolean pickupstop=Components.pickupstop;
     
 
-    AnalogChannel Potentiometer= Components.RollerPot;
+    //AnalogChannel Potentiometer= Components.RollerPot;
     DigitalInput limitDown=Components.UpPickupLimit;
     DigitalInput limitUp= Components.DownPickupLimit;
     
@@ -55,38 +55,47 @@ public class Pickup {
         Roller.set(0);
         PickArm.set(Relay.Value.kOff);
         
-        initpot =Potentiometer.getAverageVoltage();
+        //initpot =Potentiometer.getAverageVoltage();
         MID_LOCATION+=initpot;
         
     }
+
+    
     public void teleopInit(){
         
     }
     public void teleop(){ //function 
        Arm();
        roller();
+       rollerfoward=Components.rollerfoward;
+       rollerreverse=Components.rollerreverse;
+       rollerstop=Components.rollerstop;
+       pickupdown=Components.pickupdown;
+       pickuptop=Components.pickuptop;
+       //pickupmiddle=Components.pickupmiddle;
+       pickupstop=Components.pickupstop;
        
     }
     private void roller(){
        
         switch(k){
             case STOPPED:{// Roller stopped
-                if (rollerfoward){
+                if (Components.rollerfoward){
                     k=MOVING_FORWARD;
                     Roller.set(1.0);
-                } else if (rollerreverse){
+                } else if (Components.rollerreverse){
                     k=MOVING_BACKWARD;
                     Roller.set(-1.0);
                 }
              }
             case MOVING_FORWARD:{// roller is moving to pick the ball
-                if (rollerstop||rollerreverse){
+                if (Components.rollerstop||Components.rollerreverse){
                     k=STOPPED;
                     Roller.set(0.0);
                 } 
             }
             case MOVING_BACKWARD:{ //roller is moving to throu the ball out
-                if (rollerfoward||rollerstop){
+                if (Components.rollerfoward||Components.rollerstop){
                     k=STOPPED;
                     Roller.set(0);
                 }
@@ -103,7 +112,7 @@ public class Pickup {
                    n=MOVE_UP;
                    //PickArm.set(-speed1);
                    PickArm.set(Relay.Value.kReverse);
-               } else if(pickupdown){
+               } else if(Components.pickupdown){
                    n=MOVE_DOWN;
                    PickArm.set(Relay.Value.kForward);
                }
@@ -113,58 +122,38 @@ public class Pickup {
                    n=MOVE_UP;
                   // PickArm.set(-speed1);
                    PickArm.set(Relay.Value.kReverse);
-               } else if (pickupmiddle){
-                   n=MOVE_PARTIAL_UP;
-                   //PickArm.set(-speed2);
-                   PickArm.set(Relay.Value.kReverse);
-                  }
+               }
+               break;
                }
            case MOVE_DOWN:{
                 if (limitDown.get()==false){
                     n=STOPPED_DOWN;
                     PickArm.set(Relay.Value.kOff);
-                } else if(pickuptop||pickupstop){
+                } else if(Components.pickuptop){
                     n=STOPPED_MID;
                     PickArm.set(Relay.Value.kOff);
                 }
+                break;
            }
-           case MOVE_PARTIAL_DOWN:{
-                if(pickupstop){
-                    n=STOPPED_MID;
-                    PickArm.set(Relay.Value.kOff);
-                 } else if(Potentiometer.getValue()<=MID_LOCATION){
-                    n=STOPPED_MID;
-                    PickArm.set(Relay.Value.kOff);    
-                    }
-          }
            
            case STOPPED_UP:{
-               if(pickupdown){
+               if(Components.pickupdown){
                    n=MOVE_DOWN;
                    PickArm.set(Relay.Value.kForward);
-                } else if( pickupstop){
-                   n=MOVE_PARTIAL_DOWN;
-                   PickArm.set(Relay.Value.kForward);
-                }
+                } 
+               break;
             }
            case MOVE_UP:{
                 if (limitUp.get()==true){
                     n=STOPPED_UP;
                     PickArm.set(Relay.Value.kOff);
-                } else if(pickupdown||pickupstop){
+                } else if(Components.pickupdown){
                     n=STOPPED_MID;
                     PickArm.set(Relay.Value.kOff);
-                    }
-            }
-           case MOVE_PARTIAL_UP:{
-               if(pickupstop){
-                    n=STOPPED_MID;
-                    PickArm.set(Relay.Value.kOff);
-                 } else if(Potentiometer.getValue()>=MID_LOCATION){
-                    n=STOPPED_MID;
-                    PickArm.set(Relay.Value.kOff);   
-                    }
                 }
+                break;
+            }
+
            }    
         }
         public int getRoller(){

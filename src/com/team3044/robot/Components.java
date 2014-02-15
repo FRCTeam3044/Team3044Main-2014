@@ -60,6 +60,9 @@ public class Components {
     public static Encoder encoderleftdrive = new Encoder(1,1,1,2);
     public static Encoder encoderrightdrive = new Encoder(1,3,1,4);
     
+    public static Encoder shooterLeft = new Encoder(1,13,1,14);
+    public static Encoder shooterRight = new Encoder(1,10,1,11);
+    
  //vision
     public static Servo servCameraPickupX=new Servo(1,8);    
     public static Servo servCameraPickupY=new Servo(1,7);
