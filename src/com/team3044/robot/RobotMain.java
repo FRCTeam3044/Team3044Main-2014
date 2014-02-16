@@ -27,8 +27,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * creating this project, you must also update the manifest file in the resource
  * directory.
  */
- //TEST
+/*
+--------------------------------------
+Allocated Analog inputs on ds:
+--------------------------------------
+Analog 1: SingleSpeed speed
+Analog 2: Top shooter pot value
+--------------------------------------
+Digital Inputs:
+--------------------------------------
+None
+
+*/
 public class RobotMain extends IterativeRobot {
+    
     private Utilities utils;
     private Components components = new Components(); // if this works as static... Check net tables
     Drive drive;
@@ -38,9 +50,10 @@ public class RobotMain extends IterativeRobot {
     DriverStationLCD lcd = DriverStationLCD.getInstance();
     DriverStation ds = DriverStation.getInstance();
     TestShooter testShooter = new TestShooter();
-    int teleopState = 0;
+    
     final int PRE_OPERATOR_MOVE = 0;
     final int STANDARD_TELEOP = 1;
+    int teleopState = STANDARD_TELEOP;
     
     int autoType = 0;
     int autoIndex = 0;
@@ -90,7 +103,7 @@ public class RobotMain extends IterativeRobot {
     public void autonomousPeriodic() {
         shooter.teleop();
         pickup.teleop();
-        if(table.getDouble("ISHOT") == 1 && ds.getMatchTime() < 5){ //<--- Change to boolean
+        if(table.getDouble("ISHOT", 1) == 1 && ds.getMatchTime() < 5){ //<--- Change to boolean
             autoType = SHOOT_THEN_MOVE;
         }
         switch(autoType){
@@ -108,15 +121,7 @@ public class RobotMain extends IterativeRobot {
     public void testInit(){
         drive.teleopInit();
     }
-    
-    public void testPeriodic(){
-      //drive.Drivemain();
-      components.test();
-      components.upDateVals();
-      shooter.singlespeed =(ds.getAnalogIn(1)/5);
-      shooter.shoot();
-      SmartDashboard.putNumber("ShooterState", shooter.getshooterstate());
-    }
+ 
 
     public void teleopInit(){
         pickup.teleopInit();
@@ -129,46 +134,40 @@ public class RobotMain extends IterativeRobot {
      */
     int tmp = 0;
     public void teleopPeriodic() {
-        lcd.println(DriverStationLCD.Line.kUser1, 1, String.valueOf(Components.potvalue));
-        lcd.println(DriverStationLCD.Line.kUser2, 1, " limit up" + String.valueOf(shooter.islimitshooterup()));
-        lcd.println(DriverStationLCD.Line.kUser3, 1, "limit down " + String.valueOf(shooter.islimitshooterdown()));
-        lcd.println(DriverStationLCD.Line.kUser4, 1, "S. state" + String.valueOf(shooter.getshooterstate()));
-        lcd.updateLCD();
-        /*
-            switch(teleopState){
+        
+        
+        switch(teleopState){
+            
             case PRE_OPERATOR_MOVE:
             
-            Components.leftdriveY = -.75;
-            Components.rightdriveY = .75;
-            drive.Drivemain();
-            if(Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(2), .1)) > 0
-            || Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(5), .1)) > 0){
-            teleopState = STANDARD_TELEOP;
-            }
+                Components.leftdriveY = -.75;
+                Components.rightdriveY = .75;
+                drive.Drivemain();
+                if(Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(2), .1)) > 0
+                    || Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(5), .1)) > 0){
+                        
+                    teleopState = STANDARD_TELEOP;
+                }
             
-            break;
+                break;
+            
+            
             case STANDARD_TELEOP:{
-            components.upDateVals();
-            components.updatedrivevals();
-            pickup.teleop();
-            shooter.teleop();
-            drive.Drivemain();
-            
+                
+                components.upDateVals();
+                components.updatedrivevals();
+                pickup.teleop();
+                shooter.teleop();
+                drive.Drivemain();
+
             break;
             }
 
        
         
-    }*/
-        //testShooter.teleopPeriodic();
-        components.upDateVals();
-        components.updatedrivevals();
-        pickup.teleop();
-        shooter.singlespeed = ds.getAnalogIn(1);
-        shooter.shootpothigh = ds.getAnalogIn(2);
-        //testShooter.teleopPeriodic();
-        shooter.teleop();
-        drive.Drivemain();
+    }
+        
+
     }
     
     public void autoInit(){
@@ -178,8 +177,6 @@ public class RobotMain extends IterativeRobot {
     public void autoMoveAndShoot(){
         switch(autoIndex){
             case 0:
-                
-                //5 feet wheels are 12.25 in double check
                 drive.setDistanceToTravel(60, 60,.5);
                 
                 drive.startdriving(true);
@@ -202,7 +199,7 @@ public class RobotMain extends IterativeRobot {
                 }
             break;
             case 3:
-                if(/*pickup is down*/1==1 && shooter.getshooterstate() == shooter.down){
+                if(pickup.getPickarm() == pickup.STOPPED_DOWN && shooter.getshooterstate() == shooter.down){
                    Components.shoot = true;
                    autoIndex ++;
                 }
@@ -246,7 +243,7 @@ public class RobotMain extends IterativeRobot {
                 break;
             case 4:
                 Components.pickupdown = false;
-                if(/*Pickup is down*/ 1 == 1){
+                if(pickup.getPickarm() == pickup.STOPPED_DOWN){
                     Components.rollerreverse = true;
                     autoIndex ++;
                 }
@@ -257,7 +254,7 @@ public class RobotMain extends IterativeRobot {
         switch(autoIndex){
             case 0:
                 Components.pickupdown = true;
-                if(/*Pickup is down*/ 1 == 1){
+                if(pickup.getPickarm() == pickup.STOPPED_DOWN){
                     Components.pickupdown = false;
                     autoIndex ++;
                     

@@ -48,6 +48,11 @@ public class NetTable {
         tag = tag.toUpperCase();
         return table.getNumber(tag);
     }
+    
+    public double getDouble(String tag, double defaultValue){
+        tag = tag.toUpperCase();
+        return table.getNumber(tag,defaultValue);
+    }
     /***
      * 
      * @param tag 
