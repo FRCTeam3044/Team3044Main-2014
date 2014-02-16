@@ -6,6 +6,7 @@
 
 package com.team3044.network;
 
+import com.team3044.vision.targets.Rectangle;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import java.io.IOException;
 

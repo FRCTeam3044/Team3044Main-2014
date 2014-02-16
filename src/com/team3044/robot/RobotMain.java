@@ -13,12 +13,10 @@ import com.team3044.RobotComponents.TestShooter;
 import com.team3044.RobotComponents.Pickup;
 import com.team3044.RobotComponents.Shooter;
 import com.team3044.network.NetTable;
+import com.team3044.vision.targets.Target;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.can.CANTimeoutException;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -51,6 +49,10 @@ public class RobotMain extends IterativeRobot {
     DriverStation ds = DriverStation.getInstance();
     TestShooter testShooter = new TestShooter();
     
+    Target leftTarget;
+    Target rightTarget;
+    
+    
     final int PRE_OPERATOR_MOVE = 0;
     final int STANDARD_TELEOP = 1;
     int teleopState = STANDARD_TELEOP;
@@ -60,6 +62,9 @@ public class RobotMain extends IterativeRobot {
     
     double autoStartTime = 0;
     double time = 0;
+    
+    double teleopTime = 0;
+    double oldTeleopTime = 0;
     
     final int MOVE_THEN_SHOOT = 0;
     final int SHOOT_THEN_MOVE = 1;
@@ -89,11 +94,6 @@ public class RobotMain extends IterativeRobot {
         shooter.robotInit();
         pickup.robotInit();
         drive.robotInit();
-        
-        pickup.teleopInit();
-        drive.teleopInit();
-        shooter.teleopInit();
-        
     
     }
 
@@ -103,7 +103,7 @@ public class RobotMain extends IterativeRobot {
     public void autonomousPeriodic() {
         shooter.teleop();
         pickup.teleop();
-        if(table.getDouble("ISHOT", 1) == 1 && ds.getMatchTime() < 5){ //<--- Change to boolean
+        if(table.getDouble("ISHOT", 0) == 1 && ds.getMatchTime() < 5){ 
             autoType = SHOOT_THEN_MOVE;
         }
         switch(autoType){
@@ -119,7 +119,9 @@ public class RobotMain extends IterativeRobot {
     }
     
     public void testInit(){
+        pickup.teleopInit();
         drive.teleopInit();
+        shooter.teleopInit();
     }
  
 
@@ -132,9 +134,13 @@ public class RobotMain extends IterativeRobot {
     /**
      * This function is called periodically during operator control
      */
-    int tmp = 0;
+    
     public void teleopPeriodic() {
+        teleopTime = getLastUpdateTime();
         
+        if(teleopTime - oldTeleopTime < .5/*seconds*/){
+            //Updating and using values
+        }
         
         switch(teleopState){
             
@@ -152,8 +158,8 @@ public class RobotMain extends IterativeRobot {
                 break;
             
             
-            case STANDARD_TELEOP:{
-                
+            case STANDARD_TELEOP:
+                             
                 components.upDateVals();
                 components.updatedrivevals();
                 pickup.teleop();
@@ -161,17 +167,20 @@ public class RobotMain extends IterativeRobot {
                 drive.Drivemain();
 
             break;
-            }
-
-       
         
     }
-        
+        if(teleopTime != oldTeleopTime){
+            oldTeleopTime = teleopTime;
+        }
 
     }
     
     public void autoInit(){
         
+    }
+    
+    public double getLastUpdateTime(){
+        return table.getDouble("TIME");
     }
     
     public void autoMoveAndShoot(){

@@ -29,8 +29,6 @@ public class Pickup {
     DigitalInput limitDown = Components.UpPickupLimit;
     DigitalInput limitUp = Components.DownPickupLimit;
 
-    private double speed1 = 1.0;
-    private double speed2 = 1.0;
     private int n;
     private int k;
     final int STOPPED = 0;

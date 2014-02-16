@@ -6,6 +6,9 @@
 
 package com.team3044.network;
 
+import com.team3044.vision.targets.Rectangle;
+import com.team3044.vision.targets.Target;
+
 /**
  *
  * @author Joey
@@ -15,7 +18,7 @@ public class Camera {
     NetTable t;
             
     public Camera(){
-        t = new NetTable("CAMERA");
+        t = NetTable.getInstance();
     }
     
     public Rectangle getRectangle(int id){

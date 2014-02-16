@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package com.team3044.network;
+package com.team3044.vision.targets;
 
 /**
  *
