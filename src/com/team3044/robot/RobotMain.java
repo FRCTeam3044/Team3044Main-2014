@@ -136,7 +136,7 @@ public class RobotMain extends IterativeRobot {
      */
     
     public void teleopPeriodic() {
-        teleopTime = getLastUpdateTime();
+        teleopTime = 0;
         
         if(teleopTime - oldTeleopTime < .5/*seconds*/){
             //Updating and using values
@@ -145,7 +145,7 @@ public class RobotMain extends IterativeRobot {
         switch(teleopState){
             
             case PRE_OPERATOR_MOVE:
-            
+            /*
                 Components.leftdriveY = -.75;
                 Components.rightdriveY = .75;
                 drive.Drivemain();
@@ -154,7 +154,7 @@ public class RobotMain extends IterativeRobot {
                         
                     teleopState = STANDARD_TELEOP;
                 }
-            
+            */
                 break;
             
             
@@ -165,7 +165,13 @@ public class RobotMain extends IterativeRobot {
                 pickup.teleop();
                 shooter.teleop();
                 drive.Drivemain();
-
+                lcd.println(DriverStationLCD.Line.kUser1, 1, "Pickup Down: " + Components.DownPickupLimit + "      ");
+                lcd.println(DriverStationLCD.Line.kUser2, 1, "Pickup Up: " + Components.UpPickupLimit + "     ");
+                lcd.println(DriverStationLCD.Line.kUser3, 1, "Shooter Up: " + Components.UpShooterLimit + "    ");
+                lcd.println(DriverStationLCD.Line.kUser4, 1, "Shooter Down: " + Components.DownShooterLimit + "     ");
+                lcd.println(DriverStationLCD.Line.kUser5, 1, "Target pot: " + shooter.shootpothigh + "     ");
+                lcd.println(DriverStationLCD.Line.kUser6, 1, "Pot: " + Components.ShooterPot.getVoltage()+ "      ");
+                lcd.updateLCD();
             break;
         
     }
