@@ -119,7 +119,9 @@ public class RobotMain extends IterativeRobot {
     }
 
     public void teleopInit(){
-
+        pickup.teleopInit();
+        shooter.teleopInit();
+        drive.teleopInit();
     }
     
     /**
@@ -127,6 +129,11 @@ public class RobotMain extends IterativeRobot {
      */
     int tmp = 0;
     public void teleopPeriodic() {
+        lcd.println(DriverStationLCD.Line.kUser1, 1, String.valueOf(Components.potvalue));
+        lcd.println(DriverStationLCD.Line.kUser2, 1, " limit up" + String.valueOf(shooter.islimitshooterup()));
+        lcd.println(DriverStationLCD.Line.kUser3, 1, "limit down " + String.valueOf(shooter.islimitshooterdown()));
+        lcd.println(DriverStationLCD.Line.kUser4, 1, "S. state" + String.valueOf(shooter.getshooterstate()));
+        lcd.updateLCD();
         /*
             switch(teleopState){
             case PRE_OPERATOR_MOVE:
@@ -156,27 +163,12 @@ public class RobotMain extends IterativeRobot {
         //testShooter.teleopPeriodic();
         components.upDateVals();
         components.updatedrivevals();
-        if(Components.shoot){
-            if(ds.getDigitalIn(1)){
-                Components.LiftingPickup.set(Relay.Value.kForward);
-            }else{
-                Components.LiftingPickup.set(Relay.Value.kReverse);
-            }
-            
-            try {
-                Thread.sleep((long) (ds.getAnalogIn(2) * 100));
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-            Components.LiftingPickup.set(Relay.Value.kOff);
-        }else{
-            Components.LiftingPickup.set(Relay.Value.kOff);
-        }
-        
-        Components.PickupRollers.set(ds.getAnalogIn(3) - ds.getAnalogIn(4));
-        System.out.println("Shooterpot: " + Components.ShooterPot.getVoltage());
-        System.out.println("Pickup up: " + Components.UpPickupLimit.get());
-        System.out.println("Pickup Down" + Components.DownPickupLimit.get());
+        pickup.teleop();
+        shooter.singlespeed = ds.getAnalogIn(1);
+        shooter.shootpothigh = ds.getAnalogIn(2);
+        //testShooter.teleopPeriodic();
+        shooter.teleop();
+        drive.Drivemain();
     }
     
     public void autoInit(){
@@ -188,8 +180,9 @@ public class RobotMain extends IterativeRobot {
             case 0:
                 
                 //5 feet wheels are 12.25 in double check
-                drive.setDistanceToTravel(60, 60);
-                drive.resetDistance(true);
+                drive.setDistanceToTravel(60, 60,.5);
+                
+                drive.startdriving(true);
                 autoIndex += 1;
             break;
             case 1:            
@@ -232,8 +225,8 @@ public class RobotMain extends IterativeRobot {
     public void autoLowGoal(){
         switch(autoIndex){
             case 0:
-                drive.setDistanceToTravel(-180, -180);
-                drive.resetDistance(true);
+                drive.setDistanceToTravel(-180, -180,.5);
+                drive.startdriving(true);
                 autoIndex ++;
                 break;
             case 1:
@@ -294,8 +287,8 @@ public class RobotMain extends IterativeRobot {
                 
             break;
             case 3:
-                drive.setDistanceToTravel(60, 60);
-                drive.resetDistance(true);
+                drive.setDistanceToTravel(60, 60,.5);
+                drive.startdriving(true);
                 if(ds.getMatchTime() >= 4.5){
                     autoIndex++;
                 }

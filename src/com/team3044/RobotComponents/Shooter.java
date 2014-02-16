@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.can.CANTimeoutException;
 import edu.wpi.first.wpilibj.DriverStationLCD;
 /**
- *  
+ * 
  * 
  * Has CAN
  * Limit Switches are set to normally closed ie will send a normally true signal
@@ -43,7 +43,7 @@ public class Shooter {
     private double shootdownspeed = Components.shootdownspeed;
     
     private double shootpotvalue = Components.potvalue;
-    private double shootpotposition = Components.shooterpotpostion;
+    private double shootpotposition = Components.shooterPotPosition;
     
     private  int shootstate;
         
@@ -62,7 +62,7 @@ public class Shooter {
     private double shootpotdown = 1.75;
     private double shootpotlow =2.4;
     private double shootpotmiddle = 2.6;
-    private double shootpothigh = 3;
+    public double shootpothigh = 3;
     
     public boolean tempbutton=false;
     public boolean templimit=true;
@@ -119,7 +119,8 @@ public class Shooter {
     public void autoInit(){};
     
     public void teleopInit(){
-    try {
+   shootstate = down;
+        try {
             shootermotor.enableControl();
             shootermotorneg.enableControl();
             shootermotor2.enableControl();
@@ -211,7 +212,8 @@ public class Shooter {
     }
     
     
-    public void shoot(){   
+    public void shoot(){
+        
    boolean shootbutton = Components.shoot;
      boolean shootdownbutton = Components.shooterdown;
      //boolean shootpass = Components.pass;
@@ -251,8 +253,8 @@ public class Shooter {
                 }*/
                if(Components.shoot==true &&  islimitshooterup() ==true)
                 {
-                       try {
-                shootermotor.setX(shootspeedone);
+                    try {
+                        shootermotor.setX(shootspeedone);
                 shootermotor2.setX(shootspeedone);
                     } catch (CANTimeoutException ex) {
                     ex.printStackTrace();

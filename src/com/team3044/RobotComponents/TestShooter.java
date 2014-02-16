@@ -68,7 +68,7 @@ public class TestShooter {
                     Components.shootermotorleft2.setX(upSpeed);
                     Components.shootermotorright.setX(-upSpeed);
                     Components.shootermotorright2.setX(-upSpeed);
-                    if(Components.islimitshooteruptriggerd || Components.shooterPotPosition > upPotValue){
+                    if(Components.islimitshooteruptriggerd){
                         try {
                             Components.shootermotorleft.setX(0);
                             Components.shootermotorleft2.setX(0);
@@ -86,7 +86,7 @@ public class TestShooter {
                     Components.shootermotorleft2.setX(-downSpeed);
                     Components.shootermotorright.setX(downSpeed);
                     Components.shootermotorright2.setX(downSpeed);
-                    if(Components.islimitshooterdowntriggerd || Components.shooterPotPosition < downPotValue){
+                    if(Components.islimitshooterdowntriggerd){
                         try {
                             Components.shootermotorleft.setX(0);
                             Components.shootermotorleft2.setX(0);

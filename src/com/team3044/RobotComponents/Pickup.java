@@ -23,7 +23,7 @@ public class Pickup {
     //public static boolean pickupmiddle=Components.pickupmiddle;
     public static boolean pickupstop=Components.pickupstop;
     
-
+    DriverStation ds = DriverStation.getInstance();
     //AnalogChannel Potentiometer= Components.RollerPot;
     DigitalInput limitDown=Components.UpPickupLimit;
     DigitalInput limitUp= Components.DownPickupLimit;
@@ -82,24 +82,29 @@ public class Pickup {
             case STOPPED:{// Roller stopped
                 if (Components.rollerfoward){
                     k=MOVING_FORWARD;
-                    Roller.set(1.0);
+                    Roller.set(ds.getAnalogIn(3));
                 } else if (Components.rollerreverse){
                     k=MOVING_BACKWARD;
-                    Roller.set(-1.0);
+                    Roller.set(-ds.getAnalogIn(3));
                 }
+                
              }
+            break;
             case MOVING_FORWARD:{// roller is moving to pick the ball
                 if (Components.rollerstop||Components.rollerreverse){
                     k=STOPPED;
                     Roller.set(0.0);
                 } 
+                
             }
+            break;
             case MOVING_BACKWARD:{ //roller is moving to throu the ball out
                 if (Components.rollerfoward||Components.rollerstop){
                     k=STOPPED;
                     Roller.set(0);
                 }
            }
+            break;
                 
         }
     }
@@ -117,42 +122,47 @@ public class Pickup {
                    PickArm.set(Relay.Value.kForward);
                }
            }
+           break;
            case STOPPED_DOWN:{
                if(pickuptop){
                    n=MOVE_UP;
                   // PickArm.set(-speed1);
                    PickArm.set(Relay.Value.kReverse);
                }
-               break;
-               }
+               
+           }
+           break;
            case MOVE_DOWN:{
-                if (limitDown.get()==false){
+                if (limitDown.get()){
                     n=STOPPED_DOWN;
                     PickArm.set(Relay.Value.kOff);
                 } else if(Components.pickuptop){
                     n=STOPPED_MID;
                     PickArm.set(Relay.Value.kOff);
                 }
-                break;
+                
            }
+           break;
            
            case STOPPED_UP:{
                if(Components.pickupdown){
                    n=MOVE_DOWN;
                    PickArm.set(Relay.Value.kForward);
                 } 
-               break;
+               
             }
+           break;
            case MOVE_UP:{
-                if (limitUp.get()==true){
+                if (limitUp.get()){
                     n=STOPPED_UP;
                     PickArm.set(Relay.Value.kOff);
                 } else if(Components.pickupdown){
                     n=STOPPED_MID;
                     PickArm.set(Relay.Value.kOff);
                 }
-                break;
+                
             }
+           break;
 
            }    
         }

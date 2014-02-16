@@ -62,7 +62,9 @@ public class Components {
     
     public static Encoder shooterLeft = new Encoder(1,13,1,14);
     public static Encoder shooterRight = new Encoder(1,10,1,11);
-    
+    public static double gamePadDriveTriggers = 0.0;
+    public static double gamePadDriveX = 0;
+    public static double gamePadDriveX2 = 0;
  //vision
     public static Servo servCameraPickupX=new Servo(1,8);    
     public static Servo servCameraPickupY=new Servo(1,7);
@@ -119,7 +121,7 @@ public class Components {
     public static double shootspeedone = .5;
     public static double shootspeedtwo =.4;
     public static double shootspeedthree = .2;
-    public static double shootdownspeed = -.25;
+    public static double shootdownspeed = -.1;
     public static double potvalue;
     public static double shooterPotPosition;
     private boolean pickupuplimit;
@@ -157,13 +159,14 @@ public class Components {
             //button vals.
     
      //change with axis?
+     gamePadDriveTriggers = GamePaddrive.getRawAxis(3);
      rollerfoward=GamePaddrive.getRawButton(6);
      rollerreverse=GamePaddrive.getRawButton(5);
      rollerstop=GamePaddrive.getRawButton(8);
      
      pickupdown=GamePaddrive.getRawButton(1);
-     pickuptop=GamePaddrive.getRawButton(2);
-     pickupmiddle=GamePaddrive.getRawButton(4);
+     pickuptop=GamePaddrive.getRawButton(4);
+     pickupmiddle=GamePaddrive.getRawButton(2);
      pickupstop=GamePaddrive.getRawButton(3);//talk to minh
      
      shoot=GamePadshoot.getRawButton(6);//right bumper
