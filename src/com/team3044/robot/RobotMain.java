@@ -4,9 +4,7 @@
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
-
 package com.team3044.robot;
-
 
 import com.team3044.RobotComponents.Drive;
 import com.team3044.RobotComponents.TestShooter;
@@ -26,19 +24,19 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  * directory.
  */
 /*
---------------------------------------
-Allocated Analog inputs on ds:
---------------------------------------
-Analog 1: SingleSpeed speed
-Analog 2: Top shooter pot value
---------------------------------------
-Digital Inputs:
---------------------------------------
-None
+ --------------------------------------
+ Allocated Analog inputs on ds:
+ --------------------------------------
+ Analog 1: SingleSpeed speed
+ Analog 2: Top shooter pot value
+ --------------------------------------
+ Digital Inputs:
+ --------------------------------------
+ None
 
-*/
+ */
 public class RobotMain extends IterativeRobot {
-    
+
     private Utilities utils;
     private Components components = new Components(); // if this works as static... Check net tables
     Drive drive;
@@ -48,37 +46,35 @@ public class RobotMain extends IterativeRobot {
     DriverStationLCD lcd = DriverStationLCD.getInstance();
     DriverStation ds = DriverStation.getInstance();
     TestShooter testShooter = new TestShooter();
-    
+
     Target leftTarget;
     Target rightTarget;
-    
-    
+
     final int PRE_OPERATOR_MOVE = 0;
     final int STANDARD_TELEOP = 1;
     int teleopState = STANDARD_TELEOP;
-    
+
     int autoType = 0;
     int autoIndex = 0;
-    
+
     double autoStartTime = 0;
     double time = 0;
-    
+
     double teleopTime = 0;
     double oldTeleopTime = 0;
-    
+
     final int MOVE_THEN_SHOOT = 0;
     final int SHOOT_THEN_MOVE = 1;
-        
+
     //Camera camera = new Camera();
-    
-    public Utilities getUtilities(){
+    public Utilities getUtilities() {
         return utils;
     }
-    
-    public Components getComponents(){
+
+    public Components getComponents() {
         return components;
     }
-    
+
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -90,24 +86,22 @@ public class RobotMain extends IterativeRobot {
         pickup = new Pickup();
         shooter = new Shooter();
         drive = new Drive();
-        
+
         shooter.robotInit();
         pickup.robotInit();
         drive.robotInit();
-    
+
     }
 
-    
-    public void testPeriodic(){
+    public void testPeriodic() {
         drive.DriveAuto();
 
-               
         System.out.println("Left drive encoder: " + String.valueOf(Components.encoderleftdrive.getDistance()));
         System.out.println("Right Drive Encoder: " + String.valueOf(Components.encoderrightdrive.getDistance()));
-                
-        if(drive.hasTraveledSetDistance()){
+
+        if (drive.hasTraveledSetDistance()) {
             drive.stop();
-            
+
         }
     }
 
@@ -125,67 +119,70 @@ public class RobotMain extends IterativeRobot {
         System.out.println(Components.UpPickupLimit.get());
         System.out.println(pickup.getPickarm());
         //
-        autoShootAndMove(); 
+        autoShootAndMove();
         /*switch(autoType){
-            case MOVE_THEN_SHOOT:
-                autoMoveAndShoot();
-            break;
+         case MOVE_THEN_SHOOT:
+         autoMoveAndShoot();
+         break;
             
-            case SHOOT_THEN_MOVE:
-                autoShootAndMove();
-            break;
+         case SHOOT_THEN_MOVE:
+         autoShootAndMove();
+         break;
                 
-        }*/
+         }*/
     }
-    
-    public void testInit(){
+
+    public void testInit() {
         drive.setDistanceToTravel(72, 72, .25);
         drive.startdriving(true);
         pickup.teleopInit();
         drive.teleopInit();
         shooter.teleopInit();
     }
- 
 
-    public void teleopInit(){
+    public void teleopInit() {
         pickup.teleopInit();
         shooter.teleopInit();
         drive.teleopInit();
 
         Components.encoderleftdrive.reset();
         Components.encoderrightdrive.reset();
-        
+
     }
-    
+
     /**
      * This function is called periodically during operator control
      */
-    
     public void teleopPeriodic() {
         teleopTime = 0;
+
+        lcd.println(DriverStationLCD.Line.kUser1, 1, "Ultrasonic Distance: " + String.valueOf(Components.ultrasonicDistance));
         
-        if(teleopTime - oldTeleopTime < .5/*seconds*/){
-            //Updating and using values
-        }
+        lcd.println(DriverStationLCD.Line.kUser3, 1, "Shooter Up: " + Components.UpShooterLimit.get() + "    ");
+        lcd.println(DriverStationLCD.Line.kUser4, 1, "Shooter Down: " + Components.DownShooterLimit.get() + "     ");
+        lcd.println(DriverStationLCD.Line.kUser5, 1, "Target pot: " + shooter.shootpothigh + "     ");
+        lcd.println(DriverStationLCD.Line.kUser6, 1, "Pot: " + Components.ShooterPot.getVoltage() + "      ");
+        lcd.updateLCD();
         
-        switch(teleopState){
-            
+        
+        
+        switch (teleopState) {
+
             case PRE_OPERATOR_MOVE:
-            /*
+
                 Components.leftdriveY = -.75;
                 Components.rightdriveY = .75;
                 drive.Drivemain();
-                if(Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(2), .1)) > 0
-                    || Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(5), .1)) > 0){
-                        
+                if (Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(2), .1)) > 0
+                        || Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(5), .1)) > 0) {
+
                     teleopState = STANDARD_TELEOP;
                 }
-            */
+
                 break;
-            
-            
+
             case STANDARD_TELEOP:
-                             
+
                 components.upDateVals();
                 components.updatedrivevals();
                 pickup.teleop();
@@ -193,152 +190,145 @@ public class RobotMain extends IterativeRobot {
                 drive.Drivemain();
                 System.out.println("Left drive encoder: " + String.valueOf(Components.encoderleftdrive.getDistance()));
                 System.out.println("Right Drive Encoder: " + String.valueOf(Components.encoderrightdrive.getDistance()));
-                lcd.println(DriverStationLCD.Line.kUser1, 1, "Left Drive Encoder: " + String.valueOf(Components.encoderleftdrive.getDistance()));
-                lcd.println(DriverStationLCD.Line.kUser2, 1, "Right Drive Encoder: " + String.valueOf(Components.encoderrightdrive.getDistance()));
-                lcd.println(DriverStationLCD.Line.kUser3, 1, "Shooter Up: " + Components.UpShooterLimit.get() + "    ");
-                lcd.println(DriverStationLCD.Line.kUser4, 1, "Shooter Down: " + Components.DownShooterLimit.get() + "     ");
-                lcd.println(DriverStationLCD.Line.kUser5, 1, "Target pot: " + shooter.shootpothigh + "     ");
-                lcd.println(DriverStationLCD.Line.kUser6, 1, "Pot: " + Components.ShooterPot.getVoltage()+ "      ");
-                lcd.updateLCD();
-            break;
-        
-    }
-        if(teleopTime != oldTeleopTime){
+
+                break;
+
+        }
+        if (teleopTime != oldTeleopTime) {
             oldTeleopTime = teleopTime;
         }
 
     }
-    
-    public void autoInit(){
-        
+
+    public void autoInit() {
+
     }
-    
-    public double getLastUpdateTime(){
+
+    public double getLastUpdateTime() {
         return table.getDouble("TIME");
     }
-    
-    public void autoMoveAndShoot(){
-        switch(autoIndex){
+
+    public void autoMoveAndShoot() {
+        switch (autoIndex) {
             case 0:
-                drive.setDistanceToTravel(60, 60,.5);
-                
+                drive.setDistanceToTravel(60, 60, .5);
+
                 drive.startdriving(true);
                 autoIndex += 1;
-            break;
-            case 1:            
-                if(drive.hasTraveledSetDistance() || ds.getMatchTime() >= 4){
-                    
+                break;
+            case 1:
+                if (drive.hasTraveledSetDistance() || ds.getMatchTime() >= 4) {
+
                     drive.stop();
                     autoIndex++;
                     time = ds.getMatchTime();
                 }
-            break;
+                break;
             case 2:
                 Components.pickupdown = true;
                 //assuming it takes .5 seconds from shot to scoring
-                if(ds.getMatchTime() > 4.5){
-                    autoIndex ++;
+                if (ds.getMatchTime() > 4.5) {
+                    autoIndex++;
                     Components.pickupdown = false;
                 }
-            break;
+                break;
             case 3:
-                if(pickup.getPickarm() == pickup.STOPPED_DOWN && shooter.getshooterstate() == shooter.down){
-                   Components.shoot = true;
-                   autoIndex ++;
+                if (pickup.getPickarm() == pickup.STOPPED_DOWN && shooter.getshooterstate() == shooter.down) {
+                    Components.shoot = true;
+                    autoIndex++;
                 }
-            break;
+                break;
             case 4:
                 Components.shoot = false;
-                if(shooter.getshooterstate() == shooter.stopped){
+                if (shooter.getshooterstate() == shooter.stopped) {
                     Components.shooterdown = true;
-                    autoIndex ++;
+                    autoIndex++;
                 }
-            break;
+                break;
             case 5:
                 Components.shooterdown = false;
-            break;
-            
-            
+                break;
+
         }
     }
-    
-    public void autoLowGoal(){
-        switch(autoIndex){
+
+    public void autoLowGoal() {
+        switch (autoIndex) {
             case 0:
-                drive.setDistanceToTravel(-180, -180,.5);
+                drive.setDistanceToTravel(-180, -180, .5);
                 drive.startdriving(true);
-                autoIndex ++;
+                autoIndex++;
                 break;
             case 1:
-                if(drive.hasTraveledSetDistance()){
+                if (drive.hasTraveledSetDistance()) {
                     drive.stop();
                     autoIndex++;
                 }
                 break;
             case 2:
-                if(ds.getMatchTime() > 7){
+                if (ds.getMatchTime() > 7) {
                     autoIndex++;
                 }
                 break;
             case 3:
                 Components.pickupdown = true;
-                autoIndex ++;
+                autoIndex++;
                 break;
             case 4:
                 Components.pickupdown = false;
-                if(pickup.getPickarm() == pickup.STOPPED_DOWN){
+                if (pickup.getPickarm() == pickup.STOPPED_DOWN) {
                     Components.rollerreverse = true;
-                    autoIndex ++;
+                    autoIndex++;
                 }
         }
     }
-    
-    public void autoShootAndMove(){
-        switch(autoIndex){
+
+    public void autoShootAndMove() {
+        switch (autoIndex) {
             case 0:
                 Components.pickupdown = true;
-                if(pickup.getPickarm() == pickup.STOPPED_DOWN){
+                if (pickup.getPickarm() == pickup.STOPPED_DOWN) {
                     Components.pickupdown = false;
-                    autoIndex ++;
-                    
+                    autoIndex++;
+
                 }
-                if(shooter.getshooterstate() == shooter.stopped){
+                if (shooter.getshooterstate() == shooter.stopped) {
                     //Components.shooterdown = true;
-                }else if(shooter.getshooterstate() == shooter.down){
+                } else if (shooter.getshooterstate() == shooter.down) {
                     //Components.shooterdown = false;
                 }
-                
-            break;
+
+                break;
             case 1:
                 Components.shoot = false;
                 Components.shooterdown = false;
-                if(shooter.getshooterstate() == shooter.down){
+                if (shooter.getshooterstate() == shooter.down) {
                     //Components.shoot = true;
                     autoIndex++;
                 }
-            break;
+                break;
             case 2:
                 //Components.shoot = false;
-                
-                if(shooter.getshooterstate() == shooter.stopped || ds.getMatchTime() > 4){
+
+                if (shooter.getshooterstate() == shooter.stopped || ds.getMatchTime() > 4) {
                     //Components.shooterdown = true;
                     autoIndex++;
                 }
-                
-            break;
+
+                break;
             case 3:
-                drive.setDistanceToTravel(60, 60,.5);
+                drive.setDistanceToTravel(60, 60, .5);
                 drive.startdriving(true);
-                if(ds.getMatchTime() >= 4.5){
+                if (ds.getMatchTime() >= 4.5) {
                     autoIndex++;
                 }
-            break;
+                break;
             case 4:
-                if(drive.hasTraveledSetDistance()){
+                if (drive.hasTraveledSetDistance()) {
                     drive.stop();
-                    autoIndex ++;
+                    autoIndex++;
                 }
         }
     }
-    
+
 }

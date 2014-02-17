@@ -26,8 +26,8 @@ public class Pickup {
 
     DriverStation ds = DriverStation.getInstance();
     //AnalogChannel Potentiometer= Components.RollerPot;
-    public DigitalInput limitDown = Components.UpPickupLimit;
-    public DigitalInput limitUp = Components.DownPickupLimit;
+    public DigitalInput limitDown = Components.DownPickupLimit;
+    public DigitalInput limitUp = Components.UpPickupLimit;
 
     private int n;
     private int k;
@@ -117,10 +117,10 @@ public class Pickup {
                 if (pickuptop) {
                     n = MOVE_UP;
                     //PickArm.set(-speed1);
-                    PickArm.set(Relay.Value.kReverse);
+                    PickArm.set(Relay.Value.kForward);
                 } else if (Components.pickupdown) {
                     n = MOVE_DOWN;
-                    PickArm.set(Relay.Value.kForward);
+                    PickArm.set(Relay.Value.kReverse);
                 }
             }
             break;
@@ -128,7 +128,7 @@ public class Pickup {
                 if (pickuptop) {
                     n = MOVE_UP;
                     // PickArm.set(-speed1);
-                    PickArm.set(Relay.Value.kReverse);
+                    PickArm.set(Relay.Value.kForward);
                 }
 
             }
@@ -148,7 +148,7 @@ public class Pickup {
             case STOPPED_UP: {
                 if (Components.pickupdown) {
                     n = MOVE_DOWN;
-                    PickArm.set(Relay.Value.kForward);
+                    PickArm.set(Relay.Value.kReverse);
                 }
 
             }
