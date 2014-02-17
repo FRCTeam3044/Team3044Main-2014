@@ -35,7 +35,7 @@ public class Shooter {
     private boolean shoottruss = Components.truss;
     private boolean shootsinglebutton = Components.shootsinglespeed;
 
-  //  private double shootspeedone = Components.shootspeedone;
+    //  private double shootspeedone = Components.shootspeedone;
     //private double shootspeedtwo = Components.shootspeedtwo;
     //  private double shootspeedthree = Components.shootspeedthree;
     private double shootdownspeed = Components.shootdownspeed;
@@ -49,7 +49,7 @@ public class Shooter {
     private double shootpotvalue = Components.potvalue;
     private double initialpot = 0;
     private double shootpotdown = 1.75;
-   // private double shootpotlow =2.4;
+    // private double shootpotlow =2.4;
     // private double shootpotmiddle = 2.6;
     public double shootpothigh = 3;
     private double shootsinglepot = 3;
@@ -113,7 +113,7 @@ public class Shooter {
             ex.printStackTrace();
         }
         initialpot = Components.ShooterPot.getAverageVoltage();
-    //shootpotdown +=initialpot;
+        //shootpotdown +=initialpot;
         //shootpotlow+= initialpot;
         //shootpotmiddle+= initialpot;
         //shootpothigh+=initialpot;
@@ -128,7 +128,7 @@ public class Shooter {
     ;
     
     public void teleopInit() {
-     //  p= DS.getAnalogIn(2);
+        //  p= DS.getAnalogIn(2);
         //i= DS.getAnalogIn(3);
         //d= DS.getAnalogIn(4);
         // try {
@@ -161,7 +161,7 @@ public class Shooter {
     }
 
     public void teleop() {
-
+        singlespeed = DS.getAnalogIn(1);
         shoot();
     }
 
@@ -189,7 +189,7 @@ public class Shooter {
     }
 
     public void shoot() {
-   //boolean shootbutton = Components.shoot;
+        //boolean shootbutton = Components.shoot;
         //boolean shootdownbutton = Components.shooterdown;
 
         switch (shootstate) {
@@ -265,23 +265,20 @@ public class Shooter {
                 break;
 
             case stopped:
+                try {
+                    if (/*Components.shooterdown && */islimitshooterdown() == true) {
 
-                if (Components.shooterdown && islimitshooterdown() == true) {
-                    try {
                         shootermotor.setX(shootdownspeed);
                         shootermotor2.setX(shootdownspeed);
-                    } catch (CANTimeoutException ex) {
-                        ex.printStackTrace();
-                    }
-                    try {
+
                         shootermotorneg.setX(-shootdownspeed);
                         shootermotorneg2.setX(-shootdownspeed);
-                    } catch (CANTimeoutException ex) {
-                        ex.printStackTrace();
-                    }
-                    shootstate = movingdown;
-                }
 
+                        shootstate = movingdown;
+                    }
+                } catch (CANTimeoutException ex) {
+                    ex.printStackTrace();
+                }
                 break;
 
             case movingdown:

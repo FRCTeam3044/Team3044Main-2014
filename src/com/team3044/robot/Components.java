@@ -79,7 +79,7 @@ public class Components {
     public static double passspeed = .25;
 
     //other
-    public static AnalogChannel ultrasonic = new AnalogChannel(1, 3); // going on arduino?
+    public static AnalogChannel ultrasonic = new AnalogChannel(1, 2); // going on arduino?
 
   //GamepadDrive
     /*public static double leftdriveY=0.0;//left yaxis
