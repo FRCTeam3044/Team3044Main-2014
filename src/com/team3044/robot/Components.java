@@ -80,6 +80,9 @@ public class Components {
     Joystick GamePaddrive=new Joystick(1);//check with xbox controllers
     Joystick GamePadshoot=new Joystick(2);
     
+    public static double trussspeed = .8;
+    public static double passspeed = .25;
+    
   //other
     public static AnalogChannel ultrasonic = new AnalogChannel(1,3); // going on arduino?
     
@@ -164,8 +167,8 @@ public class Components {
      rollerreverse=GamePaddrive.getRawButton(5);
      rollerstop=GamePaddrive.getRawButton(8);
      
-     pickupdown=GamePaddrive.getRawButton(4);
-     pickuptop=GamePaddrive.getRawButton(1);
+     pickuptop=GamePaddrive.getRawButton(4);
+     pickupdown=GamePaddrive.getRawButton(1);
      pickupmiddle=GamePaddrive.getRawButton(2);
      pickupstop=GamePaddrive.getRawButton(3);//talk to minh
      

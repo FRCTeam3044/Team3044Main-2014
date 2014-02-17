@@ -26,8 +26,8 @@ public class Pickup {
 
     DriverStation ds = DriverStation.getInstance();
     //AnalogChannel Potentiometer= Components.RollerPot;
-    DigitalInput limitDown = Components.UpPickupLimit;
-    DigitalInput limitUp = Components.DownPickupLimit;
+    public DigitalInput limitDown = Components.UpPickupLimit;
+    public DigitalInput limitUp = Components.DownPickupLimit;
 
     private int n;
     private int k;

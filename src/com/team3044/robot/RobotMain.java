@@ -118,11 +118,14 @@ public class RobotMain extends IterativeRobot {
         shooter.teleop();
         pickup.teleop();
         drive.DriveAuto();
-        if(table.getDouble("ISHOT", 0) == 1 && ds.getMatchTime() < 5){ 
-            autoType = SHOOT_THEN_MOVE;
-        }
-        System.out.println(autoIndex);
-        autoShootAndMove();
+        //if(table.getDouble("ISHOT", 0) == 1 && ds.getMatchTime() < 5){ 
+        //    autoType = SHOOT_THEN_MOVE;
+        //}
+        System.out.println(pickup.limitUp.get());
+        System.out.println(Components.UpPickupLimit.get());
+        System.out.println(pickup.getPickarm());
+        //
+        autoShootAndMove(); 
         /*switch(autoType){
             case MOVE_THEN_SHOOT:
                 autoMoveAndShoot();
@@ -294,7 +297,7 @@ public class RobotMain extends IterativeRobot {
         switch(autoIndex){
             case 0:
                 Components.pickupdown = true;
-                if(pickup.getPickarm() == pickup.STOPPED_DOWN || ds.getMatchTime() > 3){
+                if(pickup.getPickarm() == pickup.STOPPED_DOWN){
                     Components.pickupdown = false;
                     autoIndex ++;
                     
