@@ -152,7 +152,7 @@ public class Shooter {
     }
 
     public void teleop() {
-        this.singlespeed = ((double) (ds.getAnalogIn(1) * 2) / 5);
+        this.singlespeed = (ds.getAnalogIn(1));
         this.shootpothigh = ds.getAnalogIn(2);
         shoot();
     }

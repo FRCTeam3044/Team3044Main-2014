@@ -47,7 +47,7 @@ public class Pickup {
     private double initpot = 0;
 
     public Pickup() {
-        n = STOPPED_UP;//problem need to be fix
+        n = STOPPED_MID;//problem need to be fix
         k = STOPPED;// problem need to be fix
     }
 

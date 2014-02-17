@@ -97,16 +97,33 @@ public class RobotMain extends IterativeRobot {
     
     }
 
+    
+    public void testPeriodic(){
+        drive.DriveAuto();
+
+               
+        System.out.println("Left drive encoder: " + String.valueOf(Components.encoderleftdrive.getDistance()));
+        System.out.println("Right Drive Encoder: " + String.valueOf(Components.encoderrightdrive.getDistance()));
+                
+        if(drive.hasTraveledSetDistance()){
+            drive.stop();
+            
+        }
+    }
+
     /**
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic() {
         shooter.teleop();
         pickup.teleop();
+        drive.DriveAuto();
         if(table.getDouble("ISHOT", 0) == 1 && ds.getMatchTime() < 5){ 
             autoType = SHOOT_THEN_MOVE;
         }
-        switch(autoType){
+        System.out.println(autoIndex);
+        autoShootAndMove();
+        /*switch(autoType){
             case MOVE_THEN_SHOOT:
                 autoMoveAndShoot();
             break;
@@ -115,10 +132,12 @@ public class RobotMain extends IterativeRobot {
                 autoShootAndMove();
             break;
                 
-        }
+        }*/
     }
     
     public void testInit(){
+        drive.setDistanceToTravel(72, 72, .25);
+        drive.startdriving(true);
         pickup.teleopInit();
         drive.teleopInit();
         shooter.teleopInit();
@@ -129,6 +148,10 @@ public class RobotMain extends IterativeRobot {
         pickup.teleopInit();
         shooter.teleopInit();
         drive.teleopInit();
+
+        Components.encoderleftdrive.reset();
+        Components.encoderrightdrive.reset();
+        
     }
     
     /**
@@ -165,10 +188,12 @@ public class RobotMain extends IterativeRobot {
                 pickup.teleop();
                 shooter.teleop();
                 drive.Drivemain();
-                lcd.println(DriverStationLCD.Line.kUser1, 1, "Pickup Down: " + Components.DownPickupLimit + "      ");
-                lcd.println(DriverStationLCD.Line.kUser2, 1, "Pickup Up: " + Components.UpPickupLimit + "     ");
-                lcd.println(DriverStationLCD.Line.kUser3, 1, "Shooter Up: " + Components.UpShooterLimit + "    ");
-                lcd.println(DriverStationLCD.Line.kUser4, 1, "Shooter Down: " + Components.DownShooterLimit + "     ");
+                System.out.println("Left drive encoder: " + String.valueOf(Components.encoderleftdrive.getDistance()));
+                System.out.println("Right Drive Encoder: " + String.valueOf(Components.encoderrightdrive.getDistance()));
+                lcd.println(DriverStationLCD.Line.kUser1, 1, "Left Drive Encoder: " + String.valueOf(Components.encoderleftdrive.getDistance()));
+                lcd.println(DriverStationLCD.Line.kUser2, 1, "Right Drive Encoder: " + String.valueOf(Components.encoderrightdrive.getDistance()));
+                lcd.println(DriverStationLCD.Line.kUser3, 1, "Shooter Up: " + Components.UpShooterLimit.get() + "    ");
+                lcd.println(DriverStationLCD.Line.kUser4, 1, "Shooter Down: " + Components.DownShooterLimit.get() + "     ");
                 lcd.println(DriverStationLCD.Line.kUser5, 1, "Target pot: " + shooter.shootpothigh + "     ");
                 lcd.println(DriverStationLCD.Line.kUser6, 1, "Pot: " + Components.ShooterPot.getVoltage()+ "      ");
                 lcd.updateLCD();
@@ -269,15 +294,15 @@ public class RobotMain extends IterativeRobot {
         switch(autoIndex){
             case 0:
                 Components.pickupdown = true;
-                if(pickup.getPickarm() == pickup.STOPPED_DOWN){
+                if(pickup.getPickarm() == pickup.STOPPED_DOWN || ds.getMatchTime() > 3){
                     Components.pickupdown = false;
                     autoIndex ++;
                     
                 }
                 if(shooter.getshooterstate() == shooter.stopped){
-                    Components.shooterdown = true;
+                    //Components.shooterdown = true;
                 }else if(shooter.getshooterstate() == shooter.down){
-                    Components.shooterdown = false;
+                    //Components.shooterdown = false;
                 }
                 
             break;
@@ -285,15 +310,15 @@ public class RobotMain extends IterativeRobot {
                 Components.shoot = false;
                 Components.shooterdown = false;
                 if(shooter.getshooterstate() == shooter.down){
-                    Components.shoot = true;
+                    //Components.shoot = true;
                     autoIndex++;
                 }
             break;
             case 2:
-                Components.shoot = false;
+                //Components.shoot = false;
                 
-                if(shooter.getshooterstate() == shooter.stopped){
-                    Components.shooterdown = true;
+                if(shooter.getshooterstate() == shooter.stopped || ds.getMatchTime() > 4){
+                    //Components.shooterdown = true;
                     autoIndex++;
                 }
                 
