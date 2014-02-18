@@ -26,7 +26,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * @authorasdf Joey
  */
 public class Components {
-      //(can?), doesn't have anythign for arduino , 
+
+    //(can?), doesn't have anythign for arduino , 
     //Pickup
     public static DigitalInput UpPickupLimit = new DigitalInput(1, 6);
     public static DigitalInput DownPickupLimit = new DigitalInput(1, 5);
@@ -34,8 +35,7 @@ public class Components {
     public static Talon PickupRollers = new Talon(1, 4); //talon
     public static Relay LiftingPickup = new Relay(1, 1); //spike
 
-    public static AnalogChannel RollerPot = new AnalogChannel(1, 2);
-
+    //public static AnalogChannel RollerPot = new AnalogChannel(1, 2);
     //Shooter need motors
     public static DigitalInput DownShooterLimit = new DigitalInput(1, 8);
     public static DigitalInput UpShooterLimit = new DigitalInput(1, 9);
@@ -56,6 +56,8 @@ public class Components {
     public static Encoder encoderleftdrive = new Encoder(1, 1, 1, 2);
     public static Encoder encoderrightdrive = new Encoder(1, 3, 1, 4);
 
+    public static boolean shooterOverride = false;
+    
     public static Encoder shooterLeft = new Encoder(1, 13, 1, 14);
     public static Encoder shooterRight = new Encoder(1, 10, 1, 11);
     public static double gamePadDriveTriggers = 0.0;
@@ -81,7 +83,7 @@ public class Components {
     //other
     public static AnalogChannel ultrasonic = new AnalogChannel(1, 2); // going on arduino?
 
-  //GamepadDrive
+    //GamepadDrive
     /*public static double leftdriveY=0.0;//left yaxis
      public static double rightdriveY=0.0;
      public static boolean button1 = false;//A Buton
@@ -133,18 +135,22 @@ public class Components {
         leftdrive = new Jaguar(1, 1);
         rightdrive = new Jaguar(1, 2);
         try {
-            shootermotorleft = new CANJaguar(1, CANJaguar.ControlMode.kPercentVbus);
-            shootermotorleft.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
-            shootermotorleft.configEncoderCodesPerRev(250);
-            shootermotorright = new CANJaguar(3, CANJaguar.ControlMode.kPercentVbus);
-            shootermotorright.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
-            shootermotorright.configEncoderCodesPerRev(250);
-            shootermotorleft2 = new CANJaguar(2, CANJaguar.ControlMode.kPercentVbus);
-            shootermotorleft2.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
-            shootermotorleft2.configEncoderCodesPerRev(250);
-            shootermotorright2 = new CANJaguar(4, CANJaguar.ControlMode.kPercentVbus);
-            shootermotorright2.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
-            shootermotorright2.configEncoderCodesPerRev(250);
+            Components.shootermotorleft = new CANJaguar(5, CANJaguar.ControlMode.kVoltage);
+            Components.shootermotorleft.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            Components.shootermotorleft.configEncoderCodesPerRev(250);
+            Components.shootermotorleft.setVoltageRampRate(0.0);
+            Components.shootermotorright = new CANJaguar(3, CANJaguar.ControlMode.kVoltage);
+            Components.shootermotorright.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            Components.shootermotorright.configEncoderCodesPerRev(250);
+            Components.shootermotorright.setVoltageRampRate(0.0);
+            Components.shootermotorleft2 = new CANJaguar(2, CANJaguar.ControlMode.kVoltage);
+            Components.shootermotorleft2.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            Components.shootermotorleft2.configEncoderCodesPerRev(250);
+            Components.shootermotorleft2.setVoltageRampRate(0.0);
+            Components.shootermotorright2 = new CANJaguar(4, CANJaguar.ControlMode.kVoltage);
+            Components.shootermotorright2.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
+            Components.shootermotorright2.configEncoderCodesPerRev(250);
+            Components.shootermotorright2.setVoltageRampRate(0.0);
             //jag.setSpeedReference(CANJaguar.SpeedReference.kEncoder);
 
         } catch (CANTimeoutException ex) {
@@ -180,8 +186,6 @@ public class Components {
         pickupuplimit = DownPickupLimit.get();
         pickupdownlimit = UpPickupLimit.get();
 
-        pickuppot = RollerPot.getAverageVoltage();
-
         leftencoderd = encoderleftdrive.getDistance();
         rightencoderd = encoderrightdrive.getDistance();
         ultrasonicDistance = ultrasonic.getVoltage();
@@ -203,7 +207,7 @@ public class Components {
         SmartDashboard.putBoolean("Limit pickup up ", pickupuplimit);
         SmartDashboard.putBoolean("Limit pickup down ", pickupdownlimit);
 
-      //pots
+        //pots
         SmartDashboard.putNumber("Shooter pot ", potvalue);
         SmartDashboard.putBoolean("Direction", oldPotVal >= potvalue);
         SmartDashboard.putNumber("Pickup pot ", pickuppot);

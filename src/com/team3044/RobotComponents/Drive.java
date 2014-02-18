@@ -86,8 +86,8 @@ public class Drive {
     public void robotInit() {
         Jagleft.set(0);
         Jagright.set(0);
-        encoderleft.setDistancePerPulse(((4*Math.PI)/255)*1.22917);
-        encoderright.setDistancePerPulse(((4*Math.PI)/400)*1.22917);
+        encoderleft.setDistancePerPulse(((4*Math.PI)/250)*1.22917 * (13.0/15.0));
+        encoderright.setDistancePerPulse(((4*Math.PI)/250)*1.22917 * (13.0/15.0));
         encoderleft.setReverseDirection(true);
         encoderleft.reset();
         encoderright.reset();

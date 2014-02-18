@@ -1,11 +1,7 @@
 package com.team3044.RobotComponents;
 
 import com.team3044.robot.Components;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Jaguar;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.AnalogChannel;
-import edu.wpi.first.wpilibj.CANJaguar;
+import com.team3044.robot.RobotMain;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.can.CANTimeoutException;
 import edu.wpi.first.wpilibj.DriverStationLCD;
@@ -25,11 +21,6 @@ public class Shooter {
     private boolean islimitshooteruptrigger;
     private boolean islimitshooterdowntrigger;
 
-    CANJaguar shootermotor = Components.shootermotorleft;
-    CANJaguar shootermotor2 = Components.shootermotorleft2;
-    CANJaguar shootermotorneg = Components.shootermotorright;
-    CANJaguar shootermotorneg2 = Components.shootermotorright2;
-
     private boolean shootdownbutton = Components.shooterdown;
     private boolean shootpass = Components.pass;
     private boolean shoottruss = Components.truss;
@@ -38,17 +29,17 @@ public class Shooter {
     //  private double shootspeedone = Components.shootspeedone;
     //private double shootspeedtwo = Components.shootspeedtwo;
     //  private double shootspeedthree = Components.shootspeedthree;
-    private double shootdownspeed = Components.shootdownspeed;
-    private double trussspeed = Components.trussspeed;
-    private double passspeed = Components.passspeed;
-    public double singlespeed = .1;
+    private double shootdownspeed = Components.shootdownspeed * 12;
+    private double trussspeed = Components.trussspeed * 12;
+    private double passspeed = Components.passspeed * 12;
+    public double singlespeed = .1 * 12;
 
     //joey heres your speed that you wanted
     public double shooterspeed = .5;
 
     private double shootpotvalue = Components.potvalue;
     private double initialpot = 0;
-    private double shootpotdown = 1.75;
+    private double shootpotdown = 1.65;
     // private double shootpotlow =2.4;
     // private double shootpotmiddle = 2.6;
     public double shootpothigh = 3;
@@ -72,43 +63,24 @@ public class Shooter {
 
     DriverStationLCD ds = DriverStationLCD.getInstance();
     DriverStation DS = DriverStation.getInstance();
-
+    
     //private double p;
     //private double i;
     //private double d;
-    public Shooter() {
 
-    }
 
     public void robotInit() {
-        try {
-            shootermotor = new CANJaguar(1, CANJaguar.ControlMode.kPercentVbus);
-            shootermotor.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
-            shootermotor.configEncoderCodesPerRev(250);
-            shootermotorneg = new CANJaguar(3, CANJaguar.ControlMode.kPercentVbus);
-            shootermotorneg.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
-            shootermotorneg.configEncoderCodesPerRev(250);
-            shootermotor2 = new CANJaguar(2, CANJaguar.ControlMode.kPercentVbus);
-            shootermotor2.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
-            shootermotor2.configEncoderCodesPerRev(250);
-            shootermotorneg2 = new CANJaguar(4, CANJaguar.ControlMode.kPercentVbus);
-            shootermotorneg2.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
-            shootermotorneg2.configEncoderCodesPerRev(250);
-            //jag.setSpeedReference(CANJaguar.SpeedReference.kEncoder);
-
-        } catch (CANTimeoutException ex) {
-            ex.printStackTrace();
-        }
+        
         shootstate = down;
         try {
-            shootermotor.setX(0);
-            shootermotor2.setX(0);
+            Components.shootermotorleft.setX(0);
+            Components.shootermotorleft2.setX(0);
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }
         try {
-            shootermotorneg.setX(0);
-            shootermotorneg2.setX(0);
+            Components.shootermotorright.setX(0);
+            Components.shootermotorright2.setX(0);
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }
@@ -132,10 +104,10 @@ public class Shooter {
         //i= DS.getAnalogIn(3);
         //d= DS.getAnalogIn(4);
         // try {
-        //       shootermotor.enableControl();
-        //     shootermotorneg.enableControl();
-        //   shootermotor2.enableControl();
-        //          shootermotorneg2.enableControl();
+        //       Components.shootermotorleft.enableControl();
+        //     Components.shootermotorright.enableControl();
+        //   Components.shootermotorleft2.enableControl();
+        //          Components.shootermotorright2.enableControl();
 //        } 
         //  catch (CANTimeoutException ex) {
         //        ex.printStackTrace();
@@ -147,21 +119,22 @@ public class Shooter {
     
     public void disabledInit() {
         try {
-            shootermotor.setX(0);
-            shootermotor2.setX(0);
+            Components.shootermotorleft.setX(0);
+            Components.shootermotorleft2.setX(0);
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }
         try {
-            shootermotorneg.setX(0);
-            shootermotorneg2.setX(0);
+            Components.shootermotorright.setX(0);
+            Components.shootermotorright2.setX(0);
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
         }
     }
 
     public void teleop() {
-        singlespeed = DS.getAnalogIn(1);
+        singlespeed = DS.getAnalogIn(1) * 12;
+        shootsinglepot = DS.getAnalogIn(2);
         shoot();
     }
 
@@ -197,12 +170,12 @@ public class Shooter {
                 tempbutton = Components.shootsinglespeed;
                 templimit = islimitshooterup();
 
-                if (Components.shootsinglespeed == true && islimitshooterup() == true) {
+                if (Components.shootsinglespeed && islimitshooterup() && Components.DownPickupLimit.get()) {
                     try {
-                        shootermotor.setX(singlespeed);
-                        shootermotor2.setX(singlespeed);
-                        shootermotorneg.setX(-singlespeed);
-                        shootermotorneg2.setX(-singlespeed);
+                        Components.shootermotorleft.setX(singlespeed);
+                        Components.shootermotorleft2.setX(singlespeed);
+                        Components.shootermotorright.setX(-singlespeed);
+                        Components.shootermotorright2.setX(-singlespeed);
 
                     } catch (CANTimeoutException ex) {
                         ex.printStackTrace();
@@ -210,34 +183,34 @@ public class Shooter {
                     }
                     shootpothigh = shootsinglepot;
                     shootstate = movingup;
-                } else if (Components.truss == true && islimitshooterup() == true) {
+                } else if (Components.truss == true && islimitshooterup() == true  && Components.DownPickupLimit.get()) {
                     try {
-                        shootermotor.setX(trussspeed);
-                        shootermotor2.setX(trussspeed);
-                        shootermotorneg.setX(-trussspeed);
-                        shootermotorneg2.setX(-trussspeed);
+                        Components.shootermotorleft.setX(trussspeed);
+                        Components.shootermotorleft2.setX(trussspeed);
+                        Components.shootermotorright.setX(-trussspeed);
+                        Components.shootermotorright2.setX(-trussspeed);
                     } catch (CANTimeoutException ex) {
                         ex.printStackTrace();
                     }
                     shootpothigh = trusspothigh;
                     shootstate = movingup;
-                } else if (Components.pass == true && islimitshooterup() == true) {
+                } else if (Components.pass == true && islimitshooterup() == true && Components.DownPickupLimit.get()) {
                     try {
-                        shootermotor.setX(passspeed);
-                        shootermotor2.setX(passspeed);
-                        shootermotorneg.setX(-passspeed);
-                        shootermotorneg2.setX(-passspeed);
+                        Components.shootermotorleft.setX(passspeed);
+                        Components.shootermotorleft2.setX(passspeed);
+                        Components.shootermotorright.setX(-passspeed);
+                        Components.shootermotorright2.setX(-passspeed);
                     } catch (CANTimeoutException ex) {
                         ex.printStackTrace();
                     }
                     shootpothigh = passpot;
                     shootstate = movingup;
-                } else if (Components.shoot == true && islimitshooterup() == true) {
+                } else if (Components.shoot == true && islimitshooterup() == true  && Components.DownPickupLimit.get()) {
                     try {
-                        shootermotor.setX(shooterspeed);
-                        shootermotor2.setX(shooterspeed);
-                        shootermotorneg.setX(-shooterspeed);
-                        shootermotorneg2.setX(-shooterspeed);
+                        Components.shootermotorleft.setX(shooterspeed);
+                        Components.shootermotorleft2.setX(shooterspeed);
+                        Components.shootermotorright.setX(-shooterspeed);
+                        Components.shootermotorright2.setX(-shooterspeed);
                     } catch (CANTimeoutException ex) {
                         ex.printStackTrace();
                     }
@@ -250,14 +223,14 @@ public class Shooter {
                 if (islimitshooterup() == false || Components.potvalue >= shootpothigh) {
                     shootstate = stopped;
                     try {
-                        shootermotor.setX(0);
-                        shootermotor2.setX(0);
+                        Components.shootermotorleft.setX(0);
+                        Components.shootermotorleft2.setX(0);
                     } catch (CANTimeoutException ex) {
                         ex.printStackTrace();
                     }
                     try {
-                        shootermotorneg.setX(0);
-                        shootermotorneg2.setX(0);
+                        Components.shootermotorright.setX(0);
+                        Components.shootermotorright2.setX(0);
                     } catch (CANTimeoutException ex) {
                         ex.printStackTrace();
                     }
@@ -266,13 +239,13 @@ public class Shooter {
 
             case stopped:
                 try {
-                    if (/*Components.shooterdown && */islimitshooterdown() == true) {
+                    if (/*Components.shooterdown && */islimitshooterdown() == true  && Components.DownPickupLimit.get()) {
 
-                        shootermotor.setX(shootdownspeed);
-                        shootermotor2.setX(shootdownspeed);
+                        Components.shootermotorleft.setX(shootdownspeed);
+                        Components.shootermotorleft2.setX(shootdownspeed);
 
-                        shootermotorneg.setX(-shootdownspeed);
-                        shootermotorneg2.setX(-shootdownspeed);
+                        Components.shootermotorright.setX(-shootdownspeed);
+                        Components.shootermotorright2.setX(-shootdownspeed);
 
                         shootstate = movingdown;
                     }
@@ -285,14 +258,14 @@ public class Shooter {
                 if ((islimitshooterdown() == false) || (Components.potvalue < shootpotdown)) {
 
                     try {
-                        shootermotor.setX(0);
-                        shootermotor2.setX(0);
+                        Components.shootermotorleft.setX(0);
+                        Components.shootermotorleft2.setX(0);
                     } catch (CANTimeoutException ex) {
                         ex.printStackTrace();
                     }
                     try {
-                        shootermotorneg.setX(0);
-                        shootermotorneg2.setX(0);
+                        Components.shootermotorright.setX(0);
+                        Components.shootermotorright2.setX(0);
                     } catch (CANTimeoutException ex) {
                         ex.printStackTrace();
                     }

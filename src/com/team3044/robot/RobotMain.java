@@ -15,6 +15,8 @@ import com.team3044.vision.targets.Target;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStationLCD;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.can.CANTimeoutException;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -105,6 +107,12 @@ public class RobotMain extends IterativeRobot {
         }
     }
 
+    public void autonomousInit(){
+        drive.teleopInit();
+        drive.autoInit();
+
+    }
+    
     /**
      * This function is called periodically during autonomous
      */
@@ -115,11 +123,9 @@ public class RobotMain extends IterativeRobot {
         //if(table.getDouble("ISHOT", 0) == 1 && ds.getMatchTime() < 5){ 
         //    autoType = SHOOT_THEN_MOVE;
         //}
-        System.out.println(pickup.limitUp.get());
-        System.out.println(Components.UpPickupLimit.get());
-        System.out.println(pickup.getPickarm());
+
         //
-        autoShootAndMove();
+        autoLowGoal();
         /*switch(autoType){
          case MOVE_THEN_SHOOT:
          autoMoveAndShoot();
@@ -133,7 +139,7 @@ public class RobotMain extends IterativeRobot {
     }
 
     public void testInit() {
-        drive.setDistanceToTravel(72, 72, .25);
+        drive.setDistanceToTravel(180, 180, .25);
         drive.startdriving(true);
         pickup.teleopInit();
         drive.teleopInit();
@@ -157,15 +163,20 @@ public class RobotMain extends IterativeRobot {
         teleopTime = 0;
 
         lcd.println(DriverStationLCD.Line.kUser1, 1, "Ultrasonic Distance: " + String.valueOf(Components.ultrasonicDistance));
-        
+        try {
+            SmartDashboard.putNumber("Can voltage Left", Components.shootermotorleft.getOutputVoltage());
+            SmartDashboard.putNumber("Can voltage Right", Components.shootermotorright.getOutputVoltage());
+            SmartDashboard.putNumber("Can voltage Right 2", Components.shootermotorright2.getOutputVoltage());
+            SmartDashboard.putNumber("Can voltage Left 2", Components.shootermotorleft2.getOutputVoltage());
+        } catch (CANTimeoutException ex) {
+            ex.printStackTrace();
+        }
         lcd.println(DriverStationLCD.Line.kUser3, 1, "Shooter Up: " + Components.UpShooterLimit.get() + "    ");
         lcd.println(DriverStationLCD.Line.kUser4, 1, "Shooter Down: " + Components.DownShooterLimit.get() + "     ");
         lcd.println(DriverStationLCD.Line.kUser5, 1, "Target pot: " + shooter.shootpothigh + "     ");
         lcd.println(DriverStationLCD.Line.kUser6, 1, "Pot: " + Components.ShooterPot.getVoltage() + "      ");
         lcd.updateLCD();
-        
-        
-        
+
         switch (teleopState) {
 
             case PRE_OPERATOR_MOVE:
@@ -200,9 +211,6 @@ public class RobotMain extends IterativeRobot {
 
     }
 
-    public void autoInit() {
-
-    }
 
     public double getLastUpdateTime() {
         return table.getDouble("TIME");
@@ -253,14 +261,17 @@ public class RobotMain extends IterativeRobot {
     }
 
     public void autoLowGoal() {
+        System.out.println("AUTO " + autoIndex);
         switch (autoIndex) {
             case 0:
-                drive.setDistanceToTravel(-180, -180, .5);
+                drive.setDistanceToTravel(-180, -180, -.25);
                 drive.startdriving(true);
-                autoIndex++;
+                autoIndex = 1;
+                System.out.println("Setting Distance: " + drive.hasTraveledSetDistance());
                 break;
             case 1:
-                if (drive.hasTraveledSetDistance()) {
+                
+                if(drive.hasTraveledSetDistance()) {
                     drive.stop();
                     autoIndex++;
                 }
@@ -271,15 +282,14 @@ public class RobotMain extends IterativeRobot {
                 }
                 break;
             case 3:
-                Components.pickupdown = true;
+                //Components.pickupdown = true;
                 autoIndex++;
                 break;
             case 4:
-                Components.pickupdown = false;
-                if (pickup.getPickarm() == pickup.STOPPED_DOWN) {
-                    Components.rollerreverse = true;
-                    autoIndex++;
-                }
+
+                Components.rollerreverse = true;
+                autoIndex++;
+
         }
     }
 
