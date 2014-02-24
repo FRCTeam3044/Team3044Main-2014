@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import com.team3044.robot.Components;
 import com.team3044.robot.Utilities;
 import edu.wpi.first.wpilibj.Jaguar;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  *
@@ -86,8 +87,8 @@ public class Drive {
     public void robotInit() {
         Jagleft.set(0);
         Jagright.set(0);
-        encoderleft.setDistancePerPulse(((4*Math.PI)/250)*1.22917 * (13.0/15.0));
-        encoderright.setDistancePerPulse(((4*Math.PI)/250)*1.22917 * (13.0/15.0));
+        encoderleft.setDistancePerPulse((4*Math.PI)/250/* * (168.62812/150.59538) * (190.0/180.0)*/);
+        encoderright.setDistancePerPulse((4*Math.PI)/250/* * (190.0/180.0) * (179.0/180.0)*/);
         encoderleft.setReverseDirection(true);
         encoderleft.reset();
         encoderright.reset();
@@ -121,7 +122,9 @@ public class Drive {
         } else {
             Jagleft.set(Utilities.deadband(Components.leftdriveY, 0.1) * scaler);
             Jagright.set(-Utilities.deadband(Components.rightdriveY, 0.1) * scaler);
-
+            SmartDashboard.putNumber("Encoder left Rate: ", Components.encoderleftdrive.getRate());
+            SmartDashboard.putNumber("Encoder right Rate: ", Components.encoderrightdrive.getRate());
+            SmartDashboard.putNumber("Encoder left smooth", Utilities.lowpass(Components.encoderleftdrive.getRate(), 3));
         }
         if (Math.abs(Components.gamePadDriveTriggers) > .7) {
             scaler = .5;

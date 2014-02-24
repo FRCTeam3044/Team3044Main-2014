@@ -107,12 +107,13 @@ public class RobotMain extends IterativeRobot {
         }
     }
 
-    public void autonomousInit(){
+    public void autonomousInit() {
         drive.teleopInit();
+        autoIndex = 0;
         drive.autoInit();
 
     }
-    
+
     /**
      * This function is called periodically during autonomous
      */
@@ -120,11 +121,12 @@ public class RobotMain extends IterativeRobot {
         shooter.teleop();
         pickup.teleop();
         drive.DriveAuto();
+        System.out.println("left Encoder: " + Components.encoderleftdrive.getDistance());
+        System.out.println("Right Encoder: " + Components.encoderrightdrive.getDistance());
         //if(table.getDouble("ISHOT", 0) == 1 && ds.getMatchTime() < 5){ 
         //    autoType = SHOOT_THEN_MOVE;
         //}
 
-        //
         autoLowGoal();
         /*switch(autoType){
          case MOVE_THEN_SHOOT:
@@ -144,6 +146,11 @@ public class RobotMain extends IterativeRobot {
         pickup.teleopInit();
         drive.teleopInit();
         shooter.teleopInit();
+    }
+
+    public void disabledInit() {
+        pickup.DisableInit();
+        shooter.disabledInit();
     }
 
     public void teleopInit() {
@@ -211,7 +218,6 @@ public class RobotMain extends IterativeRobot {
 
     }
 
-
     public double getLastUpdateTime() {
         return table.getDouble("TIME");
     }
@@ -264,14 +270,14 @@ public class RobotMain extends IterativeRobot {
         System.out.println("AUTO " + autoIndex);
         switch (autoIndex) {
             case 0:
-                drive.setDistanceToTravel(-180, -180, -.25);
+                drive.setDistanceToTravel(180, 180, -.25);
                 drive.startdriving(true);
                 autoIndex = 1;
                 System.out.println("Setting Distance: " + drive.hasTraveledSetDistance());
                 break;
             case 1:
-                
-                if(drive.hasTraveledSetDistance()) {
+                drive.DriveAuto();
+                if (drive.hasTraveledSetDistance()) {
                     drive.stop();
                     autoIndex++;
                 }

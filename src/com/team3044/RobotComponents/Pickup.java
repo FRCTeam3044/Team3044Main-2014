@@ -158,7 +158,7 @@ public class Pickup {
         return n;
     }
     public void DisableInit(){
-        
+        Disable();
     }
     public void Disable(){
         PickArm.set(Relay.Value.kOff);
