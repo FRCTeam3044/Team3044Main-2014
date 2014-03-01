@@ -10,6 +10,7 @@ import com.team3044.RobotComponents.Drive;
 import com.team3044.RobotComponents.TestShooter;
 import com.team3044.RobotComponents.Pickup;
 import com.team3044.RobotComponents.Shooter;
+import com.team3044.network.Camera;
 import com.team3044.network.NetTable;
 import com.team3044.vision.targets.Target;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -48,7 +49,10 @@ public class RobotMain extends IterativeRobot {
     DriverStationLCD lcd = DriverStationLCD.getInstance();
     DriverStation ds = DriverStation.getInstance();
     TestShooter testShooter = new TestShooter();
-
+    boolean inShootingRange = false;
+    double calculatedShootVoltage = 0.0;
+    double calculatedShootDistance = 0.0;
+    double calculatedShootAngle = 0.0;
     Target leftTarget;
     Target rightTarget;
 
@@ -68,7 +72,7 @@ public class RobotMain extends IterativeRobot {
     final int MOVE_THEN_SHOOT = 0;
     final int SHOOT_THEN_MOVE = 1;
 
-    //Camera camera = new Camera();
+    Camera camera = new Camera();
     public Utilities getUtilities() {
         return utils;
     }
@@ -167,53 +171,78 @@ public class RobotMain extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-        teleopTime = 0;
-
-        lcd.println(DriverStationLCD.Line.kUser1, 1, "Ultrasonic Distance: " + String.valueOf(Components.ultrasonicDistance));
         try {
-            SmartDashboard.putNumber("Can voltage Left", Components.shootermotorleft.getOutputVoltage());
-            SmartDashboard.putNumber("Can voltage Right", Components.shootermotorright.getOutputVoltage());
-            SmartDashboard.putNumber("Can voltage Right 2", Components.shootermotorright2.getOutputVoltage());
-            SmartDashboard.putNumber("Can voltage Left 2", Components.shootermotorleft2.getOutputVoltage());
+            teleopTime = 0;
+            
+            //try {
+            //try {
+            //SmartDashboard.putNumber("Can voltage Left", Components.shootermotorleft.getOutputVoltage());
+            //SmartDashboard.putNumber("Can voltage Right", Components.shootermotorright.getOutputVoltage());
+            //SmartDashboard.putNumber("Can voltage Right 2", Components.shootermotorright2.getOutputVoltage());
+            //SmartDashboard.putNumber("Can voltage Left 2", Components.shootermotorleft2.getOutputVoltage());
+            //} catch (CANTimeoutException ex) {
+            //    ex.printStackTrace();
+            //}
+            lcd.println(DriverStationLCD.Line.kUser1, 1, "Shooter Up: " + Components.UpShooterLimit.get());
+            lcd.println(DriverStationLCD.Line.kUser2, 1, "Shooter Down: " + Components.DownShooterLimit.get());
+            lcd.println(DriverStationLCD.Line.kUser3, 1, "Pickup Up: " + Components.UpPickupLimit.get() + "    ");
+            lcd.println(DriverStationLCD.Line.kUser4, 1, "Pickup Down: " + Components.DownPickupLimit.get() + "     ");
+            lcd.println(DriverStationLCD.Line.kUser5, 1, "Target pot: " + shooter.shootpothigh + "     ");
+            lcd.println(DriverStationLCD.Line.kUser6, 1, "Pot: " + Components.ShooterPot.getVoltage() + "      ");
+            lcd.updateLCD();
+            
+            switch (teleopState) {
+                
+                case PRE_OPERATOR_MOVE:
+                    
+                    Components.leftdriveY = -.75;
+                    Components.rightdriveY = -.75;
+                    drive.Drivemain();
+                    if (Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(2), .1)) > 0
+                            || Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(5), .1)) > 0) {
+                        
+                        teleopState = STANDARD_TELEOP;
+                    }
+                    
+                    break;
+                    
+                case STANDARD_TELEOP:
+                    
+                    components.upDateVals();
+                    components.updatedrivevals();
+                    pickup.teleop();
+                    shooter.teleop();
+                    drive.Drivemain();
+                    SmartDashboard.putNumber("LEFT FRONT VOLTAGE", Components.shootermotorleft.getOutputVoltage());
+                    SmartDashboard.putNumber("RIGHT FRONT VOLTAGE", Components.shootermotorright.getOutputVoltage());
+                    SmartDashboard.putNumber("LEFT BACK VOLTAGE", Components.shootermotorleft2.getOutputVoltage());
+                    SmartDashboard.putNumber("RIGHT BACK VOLTAGE", Components.shootermotorright2.getOutputVoltage());
+//Take average between two targets?
+                    /*if(camera.getNumTargets() > 1){
+                    leftTarget = camera.getTarget(true);
+                    rightTarget = camera.getTarget(false);
+                    calculatedShootDistance = (leftTarget.getCalculatedDistance() + rightTarget.getCalculatedDistance())/2.0;
+                    calculatedShootAngle = (leftTarget.getAngle() + rightTarget.getAngle()) / 2.0;
+                    calculatedShootVoltage = Utilities.getCalculatedShootVoltage(calculatedShootDistance);
+                    }else if(camera.getNumTargets() == 1){
+                    if(camera.getTarget(false).getId() == -1){
+                        
+                    }else{
+                    
+                    }
+                    }*/
+                    
+                    
+                    
+                    
+                    break;
+                    
+            }
+            if (teleopTime != oldTeleopTime) {
+                oldTeleopTime = teleopTime;
+            }
         } catch (CANTimeoutException ex) {
             ex.printStackTrace();
-        }
-        lcd.println(DriverStationLCD.Line.kUser3, 1, "Shooter Up: " + Components.UpShooterLimit.get() + "    ");
-        lcd.println(DriverStationLCD.Line.kUser4, 1, "Shooter Down: " + Components.DownShooterLimit.get() + "     ");
-        lcd.println(DriverStationLCD.Line.kUser5, 1, "Target pot: " + shooter.shootpothigh + "     ");
-        lcd.println(DriverStationLCD.Line.kUser6, 1, "Pot: " + Components.ShooterPot.getVoltage() + "      ");
-        lcd.updateLCD();
-
-        switch (teleopState) {
-
-            case PRE_OPERATOR_MOVE:
-
-                Components.leftdriveY = -.75;
-                Components.rightdriveY = .75;
-                drive.Drivemain();
-                if (Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(2), .1)) > 0
-                        || Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(5), .1)) > 0) {
-
-                    teleopState = STANDARD_TELEOP;
-                }
-
-                break;
-
-            case STANDARD_TELEOP:
-
-                components.upDateVals();
-                components.updatedrivevals();
-                pickup.teleop();
-                shooter.teleop();
-                drive.Drivemain();
-                System.out.println("Left drive encoder: " + String.valueOf(Components.encoderleftdrive.getDistance()));
-                System.out.println("Right Drive Encoder: " + String.valueOf(Components.encoderrightdrive.getDistance()));
-
-                break;
-
-        }
-        if (teleopTime != oldTeleopTime) {
-            oldTeleopTime = teleopTime;
         }
 
     }

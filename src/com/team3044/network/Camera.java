@@ -41,7 +41,7 @@ public class Camera {
         return rects;
     }
     
-    public Target getTarget(){
+    public Target getTarget(boolean left){
         
         return null;
     }

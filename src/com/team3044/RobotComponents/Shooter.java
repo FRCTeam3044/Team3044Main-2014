@@ -239,7 +239,7 @@ public class Shooter {
 
             case stopped:
                 try {
-                    if (/*Components.shooterdown && */islimitshooterdown() == true  && Components.DownPickupLimit.get()) {
+                    if (Components.shooterdown && islimitshooterdown() == true  && Components.DownPickupLimit.get()) {
 
                         Components.shootermotorleft.setX(shootdownspeed);
                         Components.shootermotorleft2.setX(shootdownspeed);

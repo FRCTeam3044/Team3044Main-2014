@@ -30,7 +30,21 @@ public class Drive {
     boolean distancetraveled = false;
     final double maxdrivevalue = .85;
     double scaler = 1;
+    
+    boolean leftDriveForward = false;
+    boolean rightDriveForward = false;
+    
+    private final int FORWARD_RIGHT_SPEED = 831;
+    private final int BACKWARD_RIGHT_SPEED = 777;
+    private final int FORWARD_LEFT_SPEED = 775;
+    private final int BACKWARD_LEFT_SPEED = 795;
+    private final double SLOWEST_SPEED = FORWARD_LEFT_SPEED;
     //Test 2
+    
+    private final double FORWARD_RIGHT = 1.0;/*SLOWEST_SPEED/FORWARD_RIGHT_SPEED;*/
+    private final double BACKWARD_RIGHT = 1.0;/*SLOWEST_SPEED/BACKWARD_RIGHT_SPEED;*/
+    private final double FORWARD_LEFT = 1.0;/*SLOWEST_SPEED/FORWARD_LEFT_SPEED;*/
+    private final double BACKWARD_LEFT = 1.0;/*SLOWEST_SPEED/BACKWARD_LEFT_SPEED;*/
 
     public Drive() {
 
@@ -110,29 +124,41 @@ public class Drive {
     ;
     
     public void Drivemain() {
-
+        leftDriveForward = Components.leftdriveY < 0;
+        rightDriveForward = Components.rightdriveY > 0;
+        
+        if(Components.driveStraight){
+            if(leftDriveForward){
+                Jagleft.set(-Utilities.deadband(Components.rightdriveY * scaler,.15) * this.FORWARD_LEFT);
+            }else{
+                Jagleft.set(-Utilities.deadband(Components.rightdriveY * scaler,.15) * this.BACKWARD_LEFT);
+            }
+            if(leftDriveForward){
+                Jagright.set(Utilities.deadband(Components.leftdriveY * scaler, .15) * this.FORWARD_RIGHT);
+            }else{
+                Jagright.set(Utilities.deadband(Components.leftdriveY * scaler, .15) * this.BACKWARD_RIGHT);
+            }
+        }
+        
         if (Components.rightdriveY < -maxdrivevalue && Components.leftdriveY < -maxdrivevalue) {
-            Jagleft.set(-1 * scaler);
-            Jagright.set(1 * scaler);
+            Jagleft.set(-1 * scaler * FORWARD_LEFT);
+            Jagright.set(1 * scaler * BACKWARD_RIGHT);
         } else if (Components.rightdriveY > maxdrivevalue && Components.leftdriveY > maxdrivevalue) {
-
-            Jagleft.set(1 * scaler);
-            Jagright.set(-1 * scaler);
-
-        } else {
-            Jagleft.set(Utilities.deadband(Components.leftdriveY, 0.1) * scaler);
-            Jagright.set(-Utilities.deadband(Components.rightdriveY, 0.1) * scaler);
+            Jagleft.set(1 * scaler * BACKWARD_LEFT);
+            Jagright.set(-1 * scaler * BACKWARD_RIGHT);
             SmartDashboard.putNumber("Encoder left Rate: ", Components.encoderleftdrive.getRate());
             SmartDashboard.putNumber("Encoder right Rate: ", Components.encoderrightdrive.getRate());
             SmartDashboard.putNumber("Encoder left smooth", Utilities.lowpass(Components.encoderleftdrive.getRate(), 3));
+        } else {
+            Jagleft.set(Utilities.deadband(Components.leftdriveY, 0.15) * scaler);
+            Jagright.set(-Utilities.deadband(Components.rightdriveY, 0.15) * scaler);
+            
         }
+        
         if (Math.abs(Components.gamePadDriveTriggers) > .7) {
             scaler = .5;
         } else {
-
-            scaler = 1.0;        //leftY.set();
-
-            //rightY.set(Joyleft(Components.));        
+            scaler = 1.0;      
         }
     }
 

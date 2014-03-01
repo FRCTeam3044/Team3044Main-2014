@@ -102,6 +102,8 @@ public class Components {
     public static boolean pickupstop = false;
     public static boolean shootsinglespeed = false;
 
+    public static boolean driveStraight = false;
+    
     public static double pickuppot;
 
     public static double leftdriveY = 0.0;//left yaxis
@@ -134,6 +136,10 @@ public class Components {
     public void robotInit() {
         leftdrive = new Jaguar(1, 1);
         rightdrive = new Jaguar(1, 2);
+        initCanJags();
+    }
+
+    public void initCanJags(){
         try {
             Components.shootermotorleft = new CANJaguar(5, CANJaguar.ControlMode.kVoltage);
             Components.shootermotorleft.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
@@ -157,7 +163,7 @@ public class Components {
             ex.printStackTrace();
         }
     }
-
+    
     public void upDateVals() {
             //drive? adssdf
         //button vals.
@@ -172,7 +178,9 @@ public class Components {
         pickupdown = GamePaddrive.getRawButton(1);
         pickupmiddle = GamePaddrive.getRawButton(2);
         pickupstop = GamePaddrive.getRawButton(3);//talk to minh
-
+        
+        driveStraight = GamePaddrive.getRawButton(3);
+        
         shoot = GamePadshoot.getRawButton(1);//right bumper
         pass = GamePadshoot.getRawButton(2);
         truss = GamePadshoot.getRawButton(3);

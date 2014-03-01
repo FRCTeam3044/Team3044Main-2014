@@ -51,6 +51,10 @@ public class Utilities {
         return returnvalue;
     }
 
+    public static double getCalculatedShootVoltage(double distance){
+        return -1.0;
+    }
+    
     /* 
      * @param val Value to test
      * @param cutoff Cutoff value around 0
