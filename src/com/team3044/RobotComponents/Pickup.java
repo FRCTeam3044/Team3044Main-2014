@@ -51,7 +51,7 @@ public class Pickup {
     }
 
     public void teleopInit() {
-
+        robotInit();
     }
 
     public void teleop() { //function 
@@ -67,16 +67,16 @@ public class Pickup {
             case STOPPED: {// Roller stopped
                 if (Components.rollerfoward) {
                     k = MOVING_FORWARD;
-                    Roller.set(ds.getAnalogIn(3));
+                    Roller.set(-1/*1*/);
                 } else if (Components.rollerreverse) {
                     k = MOVING_BACKWARD;
-                    Roller.set(-ds.getAnalogIn(3));
+                    Roller.set(1/*-1*/);
                 }
 
             }
             break;
             case MOVING_FORWARD: {// roller is moving to pick the ball
-                if (Components.rollerstop || Components.rollerreverse) {
+                if (Components.rollerstop || Components.rollerreverse || !Components.rollerfoward) {
                     k = STOPPED;
                     Roller.set(0.0);
                 }
@@ -84,7 +84,7 @@ public class Pickup {
             }
             break;
             case MOVING_BACKWARD: { //roller is moving to throu the ball out
-                if (Components.rollerfoward || Components.rollerstop) {
+                if (Components.rollerfoward || Components.rollerstop || !Components.rollerreverse) {
                     k = STOPPED;
                     Roller.set(0.0);
                 }
@@ -158,7 +158,7 @@ public class Pickup {
         return n;
     }
     public void DisableInit(){
-        Disable();
+        
     }
     public void Disable(){
         PickArm.set(Relay.Value.kOff);

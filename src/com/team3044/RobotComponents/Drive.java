@@ -101,8 +101,8 @@ public class Drive {
     public void robotInit() {
         Jagleft.set(0);
         Jagright.set(0);
-        encoderleft.setDistancePerPulse((4*Math.PI)/250/* * (168.62812/150.59538) * (190.0/180.0)*/);
-        encoderright.setDistancePerPulse((4*Math.PI)/250/* * (190.0/180.0) * (179.0/180.0)*/);
+        encoderleft.setDistancePerPulse(((4*Math.PI)/250)/**1.22917 * (13.0/15.0)*/);
+        encoderright.setDistancePerPulse(((4*Math.PI)/250)/**1.22917 * (13.0/15.0)*/);
         encoderleft.setReverseDirection(true);
         encoderleft.reset();
         encoderright.reset();
@@ -146,9 +146,7 @@ public class Drive {
         } else if (Components.rightdriveY > maxdrivevalue && Components.leftdriveY > maxdrivevalue) {
             Jagleft.set(1 * scaler * BACKWARD_LEFT);
             Jagright.set(-1 * scaler * BACKWARD_RIGHT);
-            SmartDashboard.putNumber("Encoder left Rate: ", Components.encoderleftdrive.getRate());
-            SmartDashboard.putNumber("Encoder right Rate: ", Components.encoderrightdrive.getRate());
-            SmartDashboard.putNumber("Encoder left smooth", Utilities.lowpass(Components.encoderleftdrive.getRate(), 3));
+            
         } else {
             Jagleft.set(Utilities.deadband(Components.leftdriveY, 0.15) * scaler);
             Jagright.set(-Utilities.deadband(Components.rightdriveY, 0.15) * scaler);

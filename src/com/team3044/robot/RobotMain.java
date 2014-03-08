@@ -53,6 +53,7 @@ public class RobotMain extends IterativeRobot {
     double calculatedShootVoltage = 0.0;
     double calculatedShootDistance = 0.0;
     double calculatedShootAngle = 0.0;
+    double voltagescale = (1024 / 5);
     Target leftTarget;
     Target rightTarget;
 
@@ -73,6 +74,7 @@ public class RobotMain extends IterativeRobot {
     final int SHOOT_THEN_MOVE = 1;
 
     Camera camera = new Camera();
+
     public Utilities getUtilities() {
         return utils;
     }
@@ -113,8 +115,12 @@ public class RobotMain extends IterativeRobot {
 
     public void autonomousInit() {
         drive.teleopInit();
-        autoIndex = 0;
         drive.autoInit();
+        pickup.teleopInit();
+        shooter.teleopInit();
+
+        autoIndex = 0;
+        autoType = 0;
 
     }
 
@@ -125,13 +131,12 @@ public class RobotMain extends IterativeRobot {
         shooter.teleop();
         pickup.teleop();
         drive.DriveAuto();
-        System.out.println("left Encoder: " + Components.encoderleftdrive.getDistance());
-        System.out.println("Right Encoder: " + Components.encoderrightdrive.getDistance());
         //if(table.getDouble("ISHOT", 0) == 1 && ds.getMatchTime() < 5){ 
         //    autoType = SHOOT_THEN_MOVE;
         //}
 
-        autoLowGoal();
+        //
+        //autoLowGoal();
         /*switch(autoType){
          case MOVE_THEN_SHOOT:
          autoMoveAndShoot();
@@ -152,11 +157,6 @@ public class RobotMain extends IterativeRobot {
         shooter.teleopInit();
     }
 
-    public void disabledInit() {
-        pickup.DisableInit();
-        shooter.disabledInit();
-    }
-
     public void teleopInit() {
         pickup.teleopInit();
         shooter.teleopInit();
@@ -173,7 +173,7 @@ public class RobotMain extends IterativeRobot {
     public void teleopPeriodic() {
         try {
             teleopTime = 0;
-            
+
             //try {
             //try {
             //SmartDashboard.putNumber("Can voltage Left", Components.shootermotorleft.getOutputVoltage());
@@ -187,27 +187,27 @@ public class RobotMain extends IterativeRobot {
             lcd.println(DriverStationLCD.Line.kUser2, 1, "Shooter Down: " + Components.DownShooterLimit.get());
             lcd.println(DriverStationLCD.Line.kUser3, 1, "Pickup Up: " + Components.UpPickupLimit.get() + "    ");
             lcd.println(DriverStationLCD.Line.kUser4, 1, "Pickup Down: " + Components.DownPickupLimit.get() + "     ");
-            lcd.println(DriverStationLCD.Line.kUser5, 1, "Target pot: " + shooter.shootpothigh + "     ");
+            lcd.println(DriverStationLCD.Line.kUser5, 1, "Ultrasonic: " + Components.ultrasonic.getVoltage() * voltagescale + "     ");
             lcd.println(DriverStationLCD.Line.kUser6, 1, "Pot: " + Components.ShooterPot.getVoltage() + "      ");
             lcd.updateLCD();
-            
+
             switch (teleopState) {
-                
+
                 case PRE_OPERATOR_MOVE:
-                    
+
                     Components.leftdriveY = -.75;
                     Components.rightdriveY = -.75;
                     drive.Drivemain();
                     if (Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(2), .1)) > 0
                             || Math.abs(Utilities.deadband(components.GamePaddrive.getRawAxis(5), .1)) > 0) {
-                        
+
                         teleopState = STANDARD_TELEOP;
                     }
-                    
+
                     break;
-                    
+
                 case STANDARD_TELEOP:
-                    
+
                     components.upDateVals();
                     components.updatedrivevals();
                     pickup.teleop();
@@ -217,26 +217,25 @@ public class RobotMain extends IterativeRobot {
                     SmartDashboard.putNumber("RIGHT FRONT VOLTAGE", Components.shootermotorright.getOutputVoltage());
                     SmartDashboard.putNumber("LEFT BACK VOLTAGE", Components.shootermotorleft2.getOutputVoltage());
                     SmartDashboard.putNumber("RIGHT BACK VOLTAGE", Components.shootermotorright2.getOutputVoltage());
-//Take average between two targets?
+                    System.out.println("Encoder Distance Left: " + Components.encoderleftdrive.getDistance());
+                    System.out.println("Encoder Distance Right: " + Components.encoderrightdrive.getDistance());
+                    //Take average between two targets?
                     /*if(camera.getNumTargets() > 1){
-                    leftTarget = camera.getTarget(true);
-                    rightTarget = camera.getTarget(false);
-                    calculatedShootDistance = (leftTarget.getCalculatedDistance() + rightTarget.getCalculatedDistance())/2.0;
-                    calculatedShootAngle = (leftTarget.getAngle() + rightTarget.getAngle()) / 2.0;
-                    calculatedShootVoltage = Utilities.getCalculatedShootVoltage(calculatedShootDistance);
-                    }else if(camera.getNumTargets() == 1){
-                    if(camera.getTarget(false).getId() == -1){
+                     leftTarget = camera.getTarget(true);
+                     rightTarget = camera.getTarget(false);
+                     calculatedShootDistance = (leftTarget.getCalculatedDistance() + rightTarget.getCalculatedDistance())/2.0;
+                     calculatedShootAngle = (leftTarget.getAngle() + rightTarget.getAngle()) / 2.0;
+                     calculatedShootVoltage = Utilities.getCalculatedShootVoltage(calculatedShootDistance);
+                     }else if(camera.getNumTargets() == 1){
+                     if(camera.getTarget(false).getId() == -1){
                         
-                    }else{
+                     }else{
                     
-                    }
-                    }*/
-                    
-                    
-                    
-                    
+                     }
+                     }*/
+
                     break;
-                    
+
             }
             if (teleopTime != oldTeleopTime) {
                 oldTeleopTime = teleopTime;
@@ -251,129 +250,106 @@ public class RobotMain extends IterativeRobot {
         return table.getDouble("TIME");
     }
 
-    public void autoMoveAndShoot() {
+    public void autoShootTwo() {
         switch (autoIndex) {
             case 0:
-                drive.setDistanceToTravel(60, 60, .5);
-
-                drive.startdriving(true);
-                autoIndex += 1;
+                Components.pickupdown = true;
+                Components.rollerfoward = true;
+                autoIndex++;
                 break;
-            case 1:
-                if (drive.hasTraveledSetDistance() || ds.getMatchTime() >= 4) {
 
-                    drive.stop();
+            case 1:
+                if (pickup.getPickarm() == pickup.STOPPED_DOWN) {
+                    Components.rollerfoward = false;
+                    Components.rollerstop = true;
                     autoIndex++;
-                    time = ds.getMatchTime();
                 }
                 break;
             case 2:
-                Components.pickupdown = true;
-                //assuming it takes .5 seconds from shot to scoring
-                if (ds.getMatchTime() > 4.5) {
+                if (ds.getMatchTime() > 3) {
+                    Components.rollerstop = false;
                     autoIndex++;
-                    Components.pickupdown = false;
                 }
                 break;
             case 3:
-                if (pickup.getPickarm() == pickup.STOPPED_DOWN && shooter.getshooterstate() == shooter.down) {
-                    Components.shoot = true;
-                    autoIndex++;
-                }
+                Components.shootsinglespeed = true;
+                autoIndex++;
                 break;
             case 4:
-                Components.shoot = false;
-                if (shooter.getshooterstate() == shooter.stopped) {
-                    Components.shooterdown = true;
-                    autoIndex++;
-                }
+
+                Components.shootsinglespeed = false;
+                autoIndex++;
+
                 break;
             case 5:
-                Components.shooterdown = false;
-                break;
-
-        }
-    }
-
-    public void autoLowGoal() {
-        System.out.println("AUTO " + autoIndex);
-        switch (autoIndex) {
-            case 0:
-                drive.setDistanceToTravel(180, 180, -.25);
-                drive.startdriving(true);
-                autoIndex = 1;
-                System.out.println("Setting Distance: " + drive.hasTraveledSetDistance());
-                break;
-            case 1:
-                drive.DriveAuto();
-                if (drive.hasTraveledSetDistance()) {
-                    drive.stop();
+                if (shooter.getshooterstate() == shooter.down) {
+                    Components.rollerfoward = true;
                     autoIndex++;
                 }
                 break;
-            case 2:
+            case 6:
                 if (ds.getMatchTime() > 7) {
+                    Components.rollerfoward = false;
+                    Components.rollerstop = true;
                     autoIndex++;
                 }
                 break;
-            case 3:
-                //Components.pickupdown = true;
+            case 7:
+                Components.rollerstop = false;
+                Components.shootsinglespeed = true;
                 autoIndex++;
                 break;
-            case 4:
+            case 8:
 
-                Components.rollerreverse = true;
+                Components.shootsinglespeed = false;
                 autoIndex++;
 
+                break;
+            case 9:
+                break;
         }
     }
 
-    public void autoShootAndMove() {
+    public void autoShoot() {
         switch (autoIndex) {
             case 0:
                 Components.pickupdown = true;
-                if (pickup.getPickarm() == pickup.STOPPED_DOWN) {
-                    Components.pickupdown = false;
-                    autoIndex++;
-
-                }
-                if (shooter.getshooterstate() == shooter.stopped) {
-                    //Components.shooterdown = true;
-                } else if (shooter.getshooterstate() == shooter.down) {
-                    //Components.shooterdown = false;
-                }
-
+                Components.rollerfoward = true;
+                autoIndex++;
                 break;
+
             case 1:
-                Components.shoot = false;
-                Components.shooterdown = false;
-                if (shooter.getshooterstate() == shooter.down) {
-                    //Components.shoot = true;
+                if (pickup.getPickarm() == pickup.STOPPED_DOWN) {
+                    Components.rollerfoward = false;
+                    Components.rollerstop = true;
                     autoIndex++;
                 }
                 break;
             case 2:
-                //Components.shoot = false;
-
-                if (shooter.getshooterstate() == shooter.stopped || ds.getMatchTime() > 4) {
-                    //Components.shooterdown = true;
+                if (ds.getMatchTime() > 3) {
+                    Components.rollerstop = false;
                     autoIndex++;
                 }
-
                 break;
             case 3:
-                drive.setDistanceToTravel(60, 60, .5);
-                drive.startdriving(true);
-                if (ds.getMatchTime() >= 4.5) {
+                Components.shootsinglespeed = true;
+                autoIndex++;
+                break;
+            case 4:
+
+                Components.shootsinglespeed = false;
+                autoIndex++;
+
+                break;
+            case 5:
+                if (shooter.getshooterstate() == shooter.down) {
+                    Components.pickuptop = true;
                     autoIndex++;
                 }
                 break;
-            case 4:
-                if (drive.hasTraveledSetDistance()) {
-                    drive.stop();
-                    autoIndex++;
-                }
+            case 6:
+                Components.pickuptop = false;
+                break;
         }
     }
-
 }
