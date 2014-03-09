@@ -7,7 +7,6 @@
 package com.team3044.robot;
 
 import com.team3044.RobotComponents.Drive;
-import com.team3044.RobotComponents.TestShooter;
 import com.team3044.RobotComponents.Pickup;
 import com.team3044.RobotComponents.Shooter;
 import com.team3044.network.Camera;
@@ -48,7 +47,7 @@ public class RobotMain extends IterativeRobot {
     NetTable table = NetTable.getInstance();
     DriverStationLCD lcd = DriverStationLCD.getInstance();
     DriverStation ds = DriverStation.getInstance();
-    TestShooter testShooter = new TestShooter();
+    
     boolean inShootingRange = false;
     double calculatedShootVoltage = 0.0;
     double calculatedShootDistance = 0.0;
