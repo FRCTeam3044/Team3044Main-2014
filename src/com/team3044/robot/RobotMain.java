@@ -47,7 +47,7 @@ public class RobotMain extends IterativeRobot {
     NetTable table = NetTable.getInstance();
     DriverStationLCD lcd = DriverStationLCD.getInstance();
     DriverStation ds = DriverStation.getInstance();
-    
+
     boolean inShootingRange = false;
     double calculatedShootVoltage = 0.0;
     double calculatedShootDistance = 0.0;
@@ -174,15 +174,6 @@ public class RobotMain extends IterativeRobot {
 
         teleopTime = 0;
 
-            //try {
-        //try {
-        //SmartDashboard.putNumber("Can voltage Left", Components.shootermotorleft.getOutputVoltage());
-        //SmartDashboard.putNumber("Can voltage Right", Components.shootermotorright.getOutputVoltage());
-        //SmartDashboard.putNumber("Can voltage Right 2", Components.shootermotorright2.getOutputVoltage());
-        //SmartDashboard.putNumber("Can voltage Left 2", Components.shootermotorleft2.getOutputVoltage());
-        //} catch (CANTimeoutException ex) {
-        //    ex.printStackTrace();
-        //}
         lcd.println(DriverStationLCD.Line.kUser1, 1, "Shooter Up: " + Components.UpShooterLimit.get());
         lcd.println(DriverStationLCD.Line.kUser2, 1, "Shooter Down: " + shooter.islimitshooterdown());
         lcd.println(DriverStationLCD.Line.kUser3, 1, "Pickup Up: " + Components.UpPickupLimit.get() + "    ");
@@ -222,21 +213,6 @@ public class RobotMain extends IterativeRobot {
                  */
                 System.out.println("Encoder Distance Left: " + Components.encoderleftdrive.getDistance());
                 System.out.println("Encoder Distance Right: " + Components.encoderrightdrive.getDistance());
-
-//Take average between two targets?
-                    /*if(camera.getNumTargets() > 1){
-                 leftTarget = camera.getTarget(true);
-                 rightTarget = camera.getTarget(false);
-                 calculatedShootDistance = (leftTarget.getCalculatedDistance() + rightTarget.getCalculatedDistance())/2.0;
-                 calculatedShootAngle = (leftTarget.getAngle() + rightTarget.getAngle()) / 2.0;
-                 calculatedShootVoltage = Utilities.getCalculatedShootVoltage(calculatedShootDistance);
-                 }else if(camera.getNumTargets() == 1){
-                 if(camera.getTarget(false).getId() == -1){
-                        
-                 }else{
-                    
-                 }
-                 }*/
                 break;
 
         }
@@ -273,43 +249,35 @@ public class RobotMain extends IterativeRobot {
                 }
                 break;
             case 3:
-                if (shooter.getshooterstate() == shooter.stopped) {
-
+                if (shooter.getshooterstate() == shooter.movingup) {
+                    Components.shootsinglespeed = false;
                 }
                 autoIndex++;
                 break;
             case 4:
-
-                Components.shootsinglespeed = false;
-                autoIndex++;
-
-                break;
-            case 5:
                 if (shooter.getshooterstate() == shooter.down) {
                     Components.rollerfoward = true;
                     autoIndex++;
                 }
+
+                autoIndex++;
+
                 break;
-            case 6:
+            case 5:
                 if (ds.getMatchTime() > 7) {
                     Components.rollerfoward = false;
-                    Components.rollerstop = true;
+
                     autoIndex++;
                 }
                 break;
-            case 7:
-                Components.rollerstop = false;
-                Components.shootsinglespeed = true;
-                autoIndex++;
+            case 6:
+                if (pickup.getPickarm() == pickup.STOPPED_DOWN) {
+                    Components.rollerstop = true;
+                    Components.shootsinglespeed = false;
+                    autoIndex++;
+                }
                 break;
-            case 8:
 
-                Components.shootsinglespeed = false;
-                autoIndex++;
-
-                break;
-            case 9:
-                break;
         }
     }
 

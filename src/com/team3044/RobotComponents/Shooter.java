@@ -1,7 +1,6 @@
 package com.team3044.RobotComponents;
 
 import com.team3044.robot.Components;
-import com.team3044.robot.RobotMain;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.can.CANTimeoutException;
 import edu.wpi.first.wpilibj.DriverStationLCD;
@@ -21,25 +20,21 @@ public class Shooter {
     private boolean islimitshooteruptrigger;
     private boolean islimitshooterdowntrigger;
 
-    private boolean shootdownbutton = Components.shooterdown;
-    private boolean shootpass = Components.pass;
-    private boolean shoottruss = Components.truss;
-    private boolean shootsinglebutton = Components.shootsinglespeed;
+
 
     //  private double shootspeedone = Components.shootspeedone;
     //private double shootspeedtwo = Components.shootspeedtwo;
     //  private double shootspeedthree = Components.shootspeedthree;
-    private double shootdownspeed = Components.shootdownspeed * 12;
-    private double trussspeed = Components.trussspeed * 12;
-    private double passspeed = Components.passspeed * 12;
+    private final double shootdownspeed = Components.shootdownspeed * 12;
+    private final double trussspeed = Components.trussspeed * 12;
+    private final double passspeed = Components.passspeed * 12;
     public double singlespeed = .1 * 12;
 
     //joey heres your speed that you wanted
     public double shooterspeed = .5;
 
-    private double shootpotvalue = Components.potvalue;
     private double initialpot = 0;
-    private double shootpotdown = 1.65;
+    private final double shootpotdown = 1.65;
     // private double shootpotlow =2.4;
     // private double shootpotmiddle = 2.6;
     public double shootpothigh = 3;
