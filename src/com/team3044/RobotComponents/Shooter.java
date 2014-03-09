@@ -60,17 +60,18 @@ public class Shooter {
 
     public boolean tempbutton = false;
     public boolean templimit = true;
-
+    
+    double time = 0.0;
+    double oldTime = 0.0;
+    
     DriverStationLCD ds = DriverStationLCD.getInstance();
     DriverStation DS = DriverStation.getInstance();
-    
+
     //private double p;
     //private double i;
     //private double d;
-
-
     public void robotInit() {
-        
+
         shootstate = down;
         try {
             Components.shootermotorleft.setX(0);
@@ -135,6 +136,7 @@ public class Shooter {
     public void teleop() {
         singlespeed = DS.getAnalogIn(1) * 12;
         shootsinglepot = DS.getAnalogIn(2);
+        time = DS.getMatchTime();
         shoot();
     }
 
@@ -183,7 +185,7 @@ public class Shooter {
                     }
                     shootpothigh = shootsinglepot;
                     shootstate = movingup;
-                } else if (Components.truss == true && islimitshooterup() == true  && Components.DownPickupLimit.get()) {
+                } else if (Components.truss == true && islimitshooterup() == true && Components.DownPickupLimit.get()) {
                     try {
                         Components.shootermotorleft.setX(trussspeed);
                         Components.shootermotorleft2.setX(trussspeed);
@@ -205,7 +207,7 @@ public class Shooter {
                     }
                     shootpothigh = passpot;
                     shootstate = movingup;
-                } else if (Components.shoot == true && islimitshooterup() == true  && Components.DownPickupLimit.get()) {
+                } else if (Components.shoot == true && islimitshooterup() == true && Components.DownPickupLimit.get()) {
                     try {
                         Components.shootermotorleft.setX(shooterspeed);
                         Components.shootermotorleft2.setX(shooterspeed);
@@ -222,6 +224,7 @@ public class Shooter {
             case movingup:
                 if (islimitshooterup() == false || Components.potvalue >= shootpothigh) {
                     shootstate = stopped;
+                    oldTime = DS.getMatchTime();
                     try {
                         Components.shootermotorleft.setX(0);
                         Components.shootermotorleft2.setX(0);
@@ -239,7 +242,7 @@ public class Shooter {
 
             case stopped:
                 try {
-                    if (/*Components.shooterdown &&*/ islimitshooterdown() == true  && Components.DownPickupLimit.get()) {
+                    if (/*Components.shooterdown && */time - oldTime > .2 && islimitshooterdown() == true && Components.DownPickupLimit.get()) {
 
                         Components.shootermotorleft.setX(shootdownspeed);
                         Components.shootermotorleft2.setX(shootdownspeed);

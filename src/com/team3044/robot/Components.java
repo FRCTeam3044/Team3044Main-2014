@@ -57,7 +57,7 @@ public class Components {
     public static Encoder encoderrightdrive = new Encoder(1, 3, 1, 4);
 
     public static boolean shooterOverride = false;
-    
+
     public static Encoder shooterLeft = new Encoder(1, 13, 1, 14);
     public static Encoder shooterRight = new Encoder(1, 10, 1, 11);
     public static double gamePadDriveTriggers = 0.0;
@@ -100,22 +100,38 @@ public class Components {
     public static boolean pickuptop = false;
     public static boolean pickupmiddle = false;
     public static boolean pickupstop = false;
-    public static boolean shootsinglespeed = false;
 
     public static boolean driveStraight = false;
-    
+
     public static double pickuppot;
 
     public static double leftdriveY = 0.0;//left yaxis
     public static double rightdriveY = 0.0;
 
     public static boolean shoot = false;
+    private static boolean oldShoot = false;
+    public static boolean shootButton = false;
+
     public static boolean pass = false;
+    private static boolean oldPass = false;
+    public static boolean passButton = false;
+
     public static boolean truss = false;
+    private static boolean oldTruss = false;
+    public static boolean trussButton = false;
+
     public static boolean shooterdown = false;
+    public static boolean shooterDownButton = false;
+
+    public static boolean shootsinglespeed = false;
+    private static boolean oldShootSingleSpeed = false;
+    public static boolean singleSpeedButton = false;
     //drive- drive+shoot 2-pickup+camera servos
     //rumble motors?
-
+    private static final double voltagescale = (1024 / 5);
+    
+    public static double uSonicDist = 0;
+    
     public static double shootmotorvalue;
     //shooter
     public static boolean islimitshooteruptriggerd = false;
@@ -139,7 +155,7 @@ public class Components {
         initCanJags();
     }
 
-    public void initCanJags(){
+    public void initCanJags() {
         try {
             Components.shootermotorleft = new CANJaguar(5, CANJaguar.ControlMode.kVoltage);
             Components.shootermotorleft.setSpeedReference(CANJaguar.SpeedReference.kQuadEncoder);
@@ -163,8 +179,8 @@ public class Components {
             ex.printStackTrace();
         }
     }
-    
-    public void upDateVals() {
+
+    public void upDateJoystickVals() {
             //drive? adssdf
         //button vals.
 
@@ -178,14 +194,23 @@ public class Components {
         pickupdown = GamePaddrive.getRawButton(1);
         pickupmiddle = GamePaddrive.getRawButton(2);
         pickupstop = GamePaddrive.getRawButton(3);//talk to minh
-        
+
         driveStraight = GamePaddrive.getRawButton(3);
-        
-        shoot = GamePadshoot.getRawButton(1);//right bumper
-        pass = GamePadshoot.getRawButton(2);
-        truss = GamePadshoot.getRawButton(3);
-        shooterdown = GamePadshoot.getRawButton(5);//leftbumper
-        shootsinglespeed = GamePadshoot.getRawButton(4);
+        //Shooter Buttons
+        shootButton = GamePadshoot.getRawButton(1);
+        passButton = GamePadshoot.getRawButton(2);
+        trussButton = GamePadshoot.getRawButton(3);
+        shooterDownButton = GamePadshoot.getRawButton(5);
+        singleSpeedButton = GamePadshoot.getRawButton(4);
+    }
+
+    public void updateSensorVals() {
+
+        shoot = shootButton && oldShoot == false;//right bumper
+        pass = passButton && oldPass == false;//B
+        truss = trussButton && oldTruss == false;//X
+        shooterdown = shooterDownButton;//leftbumper
+        shootsinglespeed = singleSpeedButton && oldShootSingleSpeed == false;//Y
 
         potvalue = ShooterPot.getAverageVoltage();
         shooterPotPosition = ShooterPot.getAverageVoltage();
@@ -196,15 +221,21 @@ public class Components {
 
         leftencoderd = encoderleftdrive.getDistance();
         rightencoderd = encoderrightdrive.getDistance();
-        ultrasonicDistance = ultrasonic.getVoltage();
+        
+        
+        
+        uSonicDist = (((Components.ultrasonic.getVoltage() * voltagescale) * .03281) / .716) - (.518 / .716);
+
+        oldShoot = shootButton;
+        oldPass = passButton;
+        oldTruss = trussButton;
+        oldShootSingleSpeed = singleSpeedButton;
 
     }
 
     public void updatedrivevals() {
         leftdriveY = -GamePaddrive.getRawAxis(2);
         rightdriveY = -GamePaddrive.getRawAxis(5);
-        System.out.println(GamePaddrive.getRawAxis(2));
-        System.out.println(GamePaddrive.getRawAxis(5));
     }
     double oldPotVal = 0;
 

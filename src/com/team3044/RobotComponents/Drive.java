@@ -46,11 +46,13 @@ public class Drive {
     private final double FORWARD_LEFT = 1.0;/*SLOWEST_SPEED/FORWARD_LEFT_SPEED;*/
     private final double BACKWARD_LEFT = 1.0;/*SLOWEST_SPEED/BACKWARD_LEFT_SPEED;*/
 
+    
     public Drive() {
 
     }
 
     public void DriveAuto() {
+        System.out.println(move);
         if (move) {
 
             if (Math.abs(encoderleft.getDistance()) > encoderleftvalue) {
@@ -69,6 +71,9 @@ public class Drive {
                 move = false;
             }
             
+        }else{
+            Jagleft.set(0);
+            Jagright.set(0);
         }
     }
 
