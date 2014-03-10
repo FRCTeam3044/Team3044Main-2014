@@ -25,6 +25,7 @@ public class Shooter {
     //  private double shootspeedone = Components.shootspeedone;
     //private double shootspeedtwo = Components.shootspeedtwo;
     //  private double shootspeedthree = Components.shootspeedthree;
+
     public static double shootdownspeed = -.1*12;
     public static double trussspeed = .8*12;
     public static double passspeed = .25*12;
@@ -252,65 +253,9 @@ public class Shooter {
                         ex.printStackTrace();
                     }
                     fastmovingpot = shootpot;
-                    shootstate = movingup;
-                }
-                break;
 
-            case movingup:
-                if (islimitshooterup() == false || Components.potvalue >= shootpothigh) {
-                    shootstate = stopped;
-                    oldTime = DS.getMatchTime();
-                    try {
-                        Components.shootermotorleft.setX(0);
-                        Components.shootermotorleft2.setX(0);
-                    } catch (CANTimeoutException ex) {
-                        ex.printStackTrace();
-                    }
-                    try {
-                        Components.shootermotorright.setX(0);
-                        Components.shootermotorright2.setX(0);
-                    } catch (CANTimeoutException ex) {
-                        ex.printStackTrace();
-                    }
-                }
-                break;
-
-            case stopped:
-                try {
-                    if (/*Components.shooterdown && */time - oldTime > .2 && islimitshooterdown() == true && Components.DownPickupLimit.get()) {
-
-                        Components.shootermotorleft.setX(shootdownspeed);
-                        Components.shootermotorleft2.setX(shootdownspeed);
-
-                        Components.shootermotorright.setX(-shootdownspeed);
-                        Components.shootermotorright2.setX(-shootdownspeed);
-
-                        shootstate = movingdown;
-                    }
-                } catch (CANTimeoutException ex) {
-                    ex.printStackTrace();
-                }
-                break;
-
-            case movingdown:
-                if ((islimitshooterdown() == false) || (Components.potvalue < shootpotdown)) {
-
-                    try {
-                        Components.shootermotorleft.setX(0);
-                        Components.shootermotorleft2.setX(0);
-                    } catch (CANTimeoutException ex) {
-                        ex.printStackTrace();
-                    }
-                    try {
-                        Components.shootermotorright.setX(0);
-                        Components.shootermotorright2.setX(0);
-                    } catch (CANTimeoutException ex) {
-                        ex.printStackTrace();
-                    }
-                    shootstate = down;
-                }
-        }
-    }
+                }    }}
+    
 
     public int getshooterstate() {
         return shootstate;
