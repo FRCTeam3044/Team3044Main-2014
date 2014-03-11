@@ -132,6 +132,10 @@ public class Components {
     private static boolean oldfastmovingshoot =false;
     public static boolean fastmovingshootbutton = false;
     
+    public static boolean longdistanceshoot =false;
+    private static boolean oldlongdistanceshoot = false;
+    public static boolean longdistanceshootbutton = false;
+    
     public static boolean shooterdown = false;
     public static boolean shooterDownButton = false;
 
@@ -209,11 +213,12 @@ public class Components {
         shootButton = GamePadshoot.getRawButton(1);
         passButton = GamePadshoot.getRawButton(2);
         trussButton = GamePadshoot.getRawButton(3);
-        shooterDownButton = GamePadshoot.getRawButton(5);
+        //shooterDownButton = GamePadshoot.getRawButton(5);
         singleSpeedButton = GamePadshoot.getRawButton(4);
         trusshpbutton = GamePadshoot.getRawButton(6);
         slowmovingshootbutton = GamePadshoot.getRawButton(8);
         fastmovingshootbutton = GamePadshoot.getRawButton(7);
+        longdistanceshootbutton = GamePadshoot.getRawButton(5);
     }
 
     public void updateSensorVals() {
@@ -223,6 +228,7 @@ public class Components {
         truss = trussButton && oldTruss == false;//X
         trusshp = trusshpbutton && oldtrusshp ==false;//RB
         shooterdown = shooterDownButton;//leftbumper
+        longdistanceshoot = longdistanceshootbutton&& oldlongdistanceshoot==false;
         shootsinglespeed = singleSpeedButton && oldShootSingleSpeed == false;//Y
         slowmovingshoot = slowmovingshootbutton && oldslowmovingshoot==false;//start
         fastmovingshoot = fastmovingshootbutton && oldfastmovingshoot ==false;//back
@@ -249,6 +255,7 @@ public class Components {
         oldShootSingleSpeed = singleSpeedButton;
         oldslowmovingshoot = slowmovingshootbutton;
         oldfastmovingshoot = fastmovingshootbutton;
+        oldlongdistanceshoot = longdistanceshootbutton;
 
     }
 
